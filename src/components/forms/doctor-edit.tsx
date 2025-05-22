@@ -117,7 +117,7 @@ export default function DoctorEditForm() {
 
   function onSubmit(data: DoctorFormValues) {
     setIsLoading(true);
-
+console.log("first",data)
     // In a real app, you would upload the image and save the form data
     setTimeout(() => {
       setIsLoading(false);

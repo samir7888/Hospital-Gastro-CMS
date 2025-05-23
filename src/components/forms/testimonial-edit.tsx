@@ -139,10 +139,11 @@ export default function TestimonialForm() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <FileUpload
+              {/* <FileUpload
+              
                 onFileChange={setTestimonialImage}
                 currentImage={!isNew ? testimonial.image : undefined}
-              />
+              /> */}
             </CardContent>
           </Card>
         </div>

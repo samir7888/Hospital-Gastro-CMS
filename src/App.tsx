@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Doctors from "./pages/doctors/Doctors";
-import Doctor from "./pages/doctors/Doctor";
+import Doctor from "./pages/doctors/DoctorCreatePage";
 import Appointments from "./pages/appointments/Appointments";
 import Appointment from "./pages/appointments/Appointment";
 import Faq from "./pages/faq/Faq";
@@ -16,6 +16,7 @@ import Applayout from "./components/layout/Applayout";
 import TitlePage from "./title/Title";
 import HeroPage from "./pages/pages/page";
 import Settings from "./pages/settings/Settings";
+import DoctorCreatePage from "./pages/doctors/DoctorCreatePage";
 
 function App() {
   return (
@@ -26,7 +27,8 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/pages" element={<HeroPage />} />
           <Route path="/doctors" element={<Doctors />} />
-          <Route path="/doctors/:id" element={<Doctor />} />
+          <Route path="/doctors/new" element={<DoctorCreatePage />} />
+          {/* <Route path="/doctors/:id" element={<Doctor />} /> */}
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/appointments/:id" element={<Appointment />} />
           <Route path="/faq" element={<Faq />} />

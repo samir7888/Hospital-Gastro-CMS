@@ -11,7 +11,7 @@ const Applayout = () => {
   };
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar open={sidebarOpen}  />
+      <Sidebar open={sidebarOpen} />
       <div className="flex flex-col flex-1">
         <Header toggleSidebar={toggleSidebar} />
         <main className="flex-1 p-4 md:p-6 bg-white overflow-y-auto max-h-full">

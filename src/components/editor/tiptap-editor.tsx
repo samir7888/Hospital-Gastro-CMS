@@ -11,6 +11,7 @@ import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorToolbar } from "./editor-toolbar";
 import { cn } from "@/lib/utils";
+import ImageResize from "tiptap-extension-resize-image";
 
 interface TiptapEditorProps {
   content: string;
@@ -28,6 +29,7 @@ export function TiptapEditor({
   const editor = useEditor({
     extensions: [
       StarterKit,
+      ImageResize,
       Underline,
       Link.configure({
         openOnClick: false,
@@ -44,18 +46,23 @@ export function TiptapEditor({
       }),
     ],
     content,
+    editorProps: {
+      attributes: {
+        class: cn(
+          "pb-20 prose prose-blue max-w-none dark:prose-invert p-4 focus:outline min-h-[200px]",
+          className
+        ),
+      },
+    },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
   });
 
   return (
-    <div className={cn("border rounded-md", className)}>
+    <div className={cn("border rounded-md overflow-hidden break-words ")}>
       <EditorToolbar editor={editor} />
-      <EditorContent
-        editor={editor}
-        className="prose prose-blue max-w-none dark:prose-invert p-4 focus:outline-none min-h-[200px]"
-      />
+      <EditorContent editor={editor} />
     </div>
   );
 }

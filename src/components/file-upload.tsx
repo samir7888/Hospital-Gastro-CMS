@@ -1,79 +1,110 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from 'react'
-import { useDropzone } from 'react-dropzone'
-import { Upload, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-
+import { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+import { Upload, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useFormContext } from "react-hook-form";
+import useAxiosAuth from "@/hooks/useAuth";
 
 interface FileUploadProps {
-  onFileChange: (file: File | null) => void
-  currentImage?: string
-  maxSize?: number
-  className?: string
+  maxSize?: number;
+  className?: string;
+  name: string;
+  maxCount?: number;
+  currentImage?: string | null;
 }
 
-export function FileUpload({ 
-  onFileChange, 
-  currentImage, 
+export function FileUpload({
+  name,
+  currentImage,
   maxSize = 5242880, // 5MB
-  className 
+  className,
+  maxCount = 1,
 }: FileUploadProps) {
-  const [preview, setPreview] = useState<string | null>(currentImage || null)
-  const [error, setError] = useState<string | null>(null)
+  const form = useFormContext();
+  const axios = useAxiosAuth();
 
-  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
-    setError(null)
-    
-    if (rejectedFiles.length > 0) {
-      const errors = rejectedFiles[0].errors
-      if (errors.some((e: any) => e.code === 'file-too-large')) {
-        setError(`File is too large. Max size is ${maxSize / 1048576}MB`)
-      } else if (errors.some((e: any) => e.code === 'file-invalid-type')) {
-        setError('Invalid file type. Please upload an image.')
-      } else {
-        setError('Invalid file. Please try another.')
+  const [preview, setPreview] = useState<string | null>(currentImage || null);
+
+  const onDrop = useCallback(
+    async (acceptedFiles: File[], rejectedFiles: any[]) => {
+      const formData = new FormData();
+
+      for (const file of acceptedFiles) {
+        formData.append("images", file);
       }
-      return
-    }
+      console.log(formData);
+      const res = await axios.post("/upload/images", formData);
 
-    if (acceptedFiles.length > 0) {
-      const file = acceptedFiles[0]
-      setPreview(URL.createObjectURL(file))
-      onFileChange(file)
-    }
-  }, [maxSize, onFileChange])
+      if (res.status === 201) {
+        const fileIds = res.data.files?.map((file: any) => file.id);
+        if (maxCount > 1) {
+          form.setValue(name, fileIds);
+        } else {
+          form.setValue(name, fileIds[0]);
+        }
+      }
+
+      if (rejectedFiles.length > 0) {
+        const errors = rejectedFiles[0].errors;
+        if (errors.some((e: any) => e.code === "file-too-large")) {
+          form.setError(name, {
+            message: `File is too large. Max size is ${maxSize / 1048576}MB`,
+          });
+        } else if (errors.some((e: any) => e.code === "file-invalid-type")) {
+          form.setError(name, {
+            message: "Invalid file type. Only images are allowed.",
+          });
+        } else {
+          form.setError(name, {
+            message: "File upload failed. Please try again.",
+          });
+        }
+        return;
+      }
+
+      if (acceptedFiles.length > 0) {
+        const file = acceptedFiles[0];
+        setPreview(URL.createObjectURL(file));
+      }
+    },
+    [maxSize]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': []
+      "image/*": [],
     },
     maxSize,
-    maxFiles: 1
-  })
+    maxFiles: maxCount,
+  });
 
   const removeImage = () => {
-    setPreview(null)
-    onFileChange(null)
-  }
+    setPreview(null);
+  };
 
   return (
     <div className={className}>
       {!preview ? (
-        <div 
+        <div
           {...getRootProps()}
           className={cn(
             "border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer transition-colors",
-            isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25 hover:border-primary/50",
+            isDragActive
+              ? "border-primary bg-primary/5"
+              : "border-muted-foreground/25 hover:border-primary/50"
           )}
         >
           <input {...getInputProps()} />
           <div className="flex flex-col items-center gap-2">
             <Upload className="h-8 w-8 text-muted-foreground" />
             <p className="text-sm font-medium">
-              {isDragActive ? "Drop the image here" : "Drag & drop an image, or click to select"}
+              {isDragActive
+                ? "Drop the image here"
+                : "Drag & drop an image, or click to select"}
             </p>
             <p className="text-xs text-muted-foreground">
               PNG, JPG, GIF up to {maxSize / 1048576}MB
@@ -83,26 +114,20 @@ export function FileUpload({
       ) : (
         <div className="relative rounded-lg overflow-hidden border">
           <img
-            src={preview} 
-            alt="Preview" 
-            className="w-full h-auto object-cover max-h-[300px]" 
+            src={preview}
+            alt="Preview"
+            className="w-full h-auto object-cover max-h-[300px]"
           />
-          <Button 
-            variant="destructive" 
-            size="icon" 
-            className="absolute top-2 right-2" 
+          <Button
+            variant="destructive"
+            size="icon"
+            className="absolute top-2 right-2"
             onClick={removeImage}
           >
             <X className="h-4 w-4" />
           </Button>
         </div>
       )}
-      
-      {error && (
-        <p className="text-sm text-destructive mt-2">
-          {error}
-        </p>
-      )}
     </div>
-  )
+  );
 }

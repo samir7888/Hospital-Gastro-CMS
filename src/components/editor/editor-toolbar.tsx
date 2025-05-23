@@ -1,5 +1,6 @@
 "use client";
 
+import ImageResize from 'tiptap-extension-resize-image';
 import { useCallback } from "react";
 import { Editor } from "@tiptap/react";
 import {
@@ -11,7 +12,6 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-
   Link as LinkIcon,
   Image as ImageIcon,
 } from "lucide-react";
@@ -24,41 +24,51 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "../ui/button";
-
+import { Button, buttonVariants } from "../ui/button";
 
 interface EditorToolbarProps {
   editor: Editor | null;
 }
 
 export function EditorToolbar({ editor }: EditorToolbarProps) {
-  
-    const setLink = useCallback(() => {
-      const previousUrl = editor?.getAttributes("link").to;
-      const url = window.prompt("URL", previousUrl);
-  
-      // cancelled
-      if (url === null) {
-        return;
-      }
-  
-      // empty
-      if (url === "") {
-        editor?.chain().focus().extendMarkRange("link").unsetLink().run();
-        return;
-      }
-  
-      // update link
-      editor?.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-    }, [editor]);
-  
-    const addImage = useCallback(() => {
-      const url = window.prompt("URL");
-  
+  const setLink = useCallback(() => {
+    const previousUrl = editor?.getAttributes("link").to;
+    const url = window.prompt("URL", previousUrl);
+
+    // cancelled
+    if (url === null) {
+      return;
+    }
+
+    // empty
+    if (url === "") {
+      editor?.chain().focus().extendMarkRange("link").unsetLink().run();
+      return;
+    }
+
+    // update link
+    editor
+      ?.chain()
+      .focus()
+      .extendMarkRange("link")
+      .setLink({ href: url })
+      .run();
+  }, [editor]);
+
+  const handleImageUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+
+      if (!file) return;
+
+      const url = URL.createObjectURL(file);
+
       if (url) {
         editor?.chain().focus().setImage({ src: url }).run();
       }
-    }, [editor]);
+    },
+    [editor]
+  );
   if (!editor) {
     return null;
   }
@@ -180,6 +190,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
       <Separator orientation="vertical" className="mx-1 h-6" />
 
       <Button
+      type='button'
         variant="ghost"
         size="icon"
         onClick={setLink}
@@ -188,9 +199,19 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
         <LinkIcon className="h-4 w-4" />
       </Button>
 
-      <Button variant="ghost" size="icon" onClick={addImage}>
+      <label
+        htmlFor="upload-image"
+        className={buttonVariants({ variant: "ghost", size: "icon" })}
+      >
         <ImageIcon className="h-4 w-4" />
-      </Button>
+        <input
+          type="file"
+          accept="image/*"
+          id="upload-image"
+          className="sr-only"
+          onChange={handleImageUpload}
+        />
+      </label>
     </div>
   );
 }

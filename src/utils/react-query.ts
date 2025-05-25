@@ -1,5 +1,9 @@
 import useAxiosAuth from "@/hooks/useAuth";
-import { useMutation } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  type UseQueryResult,
+} from "@tanstack/react-query";
 
 interface AppMutationProps {
   url: string;
@@ -8,21 +12,45 @@ interface AppMutationProps {
   onError?: (data: any) => void;
 }
 
+// utils/react-query.ts
 export const useAppMutation = ({
-  url,
   type,
   onSuccess,
   onError,
+  url,
 }: AppMutationProps) => {
   const axios = useAxiosAuth();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async ({ data }: { data?: any }) => {
       const res = await axios[type](url, data);
-
-      return res;
+      return res.data;
     },
     onSuccess,
     onError,
+  });
+};
+
+interface AppQueryProps {
+  url: string;
+  queryKey: string[];
+
+  options?: Record<string, any>;
+}
+
+export const useAppQuery = <T>({
+  url,
+  queryKey = [],
+  options,
+}: AppQueryProps): UseQueryResult<T> => {
+  const axios = useAxiosAuth();
+
+  return useQuery<T>({
+    queryKey,
+    queryFn: async () => {
+      const res = await axios.get<T>(url);
+      return res.data;
+    },
+    ...options,
   });
 };

@@ -97,7 +97,6 @@ export default function FeaturesPage() {
       });
     }, 1000);
     
-    console.log(data);
   }
 
   function handleDescriptionChange(value: string, index: number) {

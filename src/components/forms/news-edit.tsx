@@ -139,7 +139,6 @@ export default function NewsEventEditPage() {
       // });
     }, 1000);
 
-    console.log(data, itemImage);
   }
 
   function handleContentChange(html: string) {

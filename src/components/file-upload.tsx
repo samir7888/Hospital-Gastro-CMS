@@ -7,15 +7,17 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useFormContext } from "react-hook-form";
 import useAxiosAuth from "@/hooks/useAuth";
+import type { ImageResponse } from "@/schema/global.schema";
 
 interface FileUploadProps {
   maxSize?: number;
   className?: string;
   name: string;
   maxCount?: number;
-  currentImage?: string | null;
+  currentImage?: TImagePreview;
 }
 
+type TImagePreview = ImageResponse | ImageResponse[] | null;
 export function FileUpload({
   name,
   currentImage,
@@ -26,7 +28,7 @@ export function FileUpload({
   const form = useFormContext();
   const axios = useAxiosAuth();
 
-  const [preview, setPreview] = useState<string | null>(currentImage || null);
+  const [preview, setPreview] = useState<TImagePreview>(currentImage || null);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[], rejectedFiles: any[]) => {
@@ -35,15 +37,21 @@ export function FileUpload({
       for (const file of acceptedFiles) {
         formData.append("images", file);
       }
-      console.log(formData);
       const res = await axios.post("/upload/images", formData);
 
       if (res.status === 201) {
-        const fileIds = res.data.files?.map((file: any) => file.id);
+        const images = res.data.files;
         if (maxCount > 1) {
-          form.setValue(name, fileIds);
+          form.setValue(
+            name,
+            images?.map((file: any) => file.id)
+          );
+          setPreview((prev) => {
+            return Array.isArray(prev) ? [...prev, ...images] : images;
+          });
         } else {
-          form.setValue(name, fileIds[0]);
+          form.setValue(name, images[0]?.id);
+          setPreview(images[0]);
         }
       }
 
@@ -64,11 +72,6 @@ export function FileUpload({
         }
         return;
       }
-
-      if (acceptedFiles.length > 0) {
-        const file = acceptedFiles[0];
-        setPreview(URL.createObjectURL(file));
-      }
     },
     [maxSize]
   );
@@ -80,15 +83,12 @@ export function FileUpload({
     },
     maxSize,
     maxFiles: maxCount,
+    multiple: maxCount > 1,
   });
-
-  const removeImage = () => {
-    setPreview(null);
-  };
 
   return (
     <div className={className}>
-      {!preview ? (
+      {(maxCount > 1 || !preview) && (
         <div
           {...getRootProps()}
           className={cn(
@@ -111,23 +111,76 @@ export function FileUpload({
             </p>
           </div>
         </div>
-      ) : (
-        <div className="relative rounded-lg overflow-hidden border">
-          <img
-            src={preview}
-            alt="Preview"
-            className="w-full h-auto object-cover max-h-[300px]"
-          />
-          <Button
-            variant="destructive"
-            size="icon"
-            className="absolute top-2 right-2"
-            onClick={removeImage}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
       )}
+
+      <ImagePreview preview={preview} name={name} setPreview={setPreview} />
     </div>
   );
+}
+
+function ImagePreview({
+  preview,
+  setPreview,
+  name,
+}: {
+  preview: TImagePreview;
+  setPreview: React.Dispatch<React.SetStateAction<TImagePreview>>;
+  name: string;
+}) {
+  const form = useFormContext();
+
+  const removeImage = () => {
+    form.setValue(name, null);
+    setPreview(null);
+  };
+
+  const filterImage = (image: ImageResponse) => {
+    if (!Array.isArray(preview)) return;
+
+    const filtered = preview.filter((p) => p?.url !== image?.url);
+    setPreview(filtered);
+
+    form.setValue(name, filtered.map((p) => p?.id).filter(Boolean));
+  };
+
+  if (!preview) return null;
+
+  if ("url" in preview) {
+    return (
+      <div className="relative flex items-center justify-center rounded-lg overflow-hidden border min-h-[300px]">
+        <img src={preview.url + "?w=300"} alt="Preview" />
+        <Button
+          variant="destructive"
+          size="icon"
+          className="absolute top-2 right-2"
+          onClick={removeImage}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  }
+
+  if (Array.isArray(preview)) {
+    return (
+      <div className="grid grid-cols-3 gap-2 mt-2">
+        {preview.map((image) => (
+          <div
+            key={image.id}
+            className="relative flex items-center justify-center rounded-lg overflow-hidden border p-1"
+          >
+            <img src={image.url + "?w=300"} alt="Preview" />
+            <Button
+              variant="destructive"
+              size="icon"
+              className="absolute top-2 right-2"
+              onClick={() => filterImage(image)}
+            >
+              <X className="size-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
+    );
+  }
 }

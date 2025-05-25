@@ -46,7 +46,7 @@ const MultiSelect = ({
   return (
     <Popover>
       <PopoverTrigger className="text-left px-3 py-2 border rounded-md text-sm capitalize">
-        {value.length ? value.join(", ") : placeholder}
+        {value?.length ? value.join(", ") : placeholder}
       </PopoverTrigger>
       <PopoverContent className="w-72">
         <Command>
@@ -63,7 +63,7 @@ const MultiSelect = ({
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value.includes(option.value)
+                        value?.includes(option.value)
                           ? "opacity-100"
                           : "opacity-0"
                       )}

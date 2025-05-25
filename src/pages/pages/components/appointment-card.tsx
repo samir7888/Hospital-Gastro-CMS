@@ -94,7 +94,6 @@ export default function AppointmentBookingSection() {
     // In a real app, you would save the form data
     setTimeout(() => {
       setIsLoading(false);
-      console.log(data);
     }, 1000);
   }
   

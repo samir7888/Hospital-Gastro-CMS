@@ -150,7 +150,6 @@ export default function FAQSection() {
     // In a real app, you would save the header data
     setTimeout(() => {
       setIsLoading(false);
-      console.log("Header data:", data);
     }, 1000);
   }
   

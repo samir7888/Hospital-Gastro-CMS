@@ -105,7 +105,6 @@ export default function TestimonialForm() {
       });
     }, 1000);
 
-    console.log(data, testimonialImage);
   }
 
   return (

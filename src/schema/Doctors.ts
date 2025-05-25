@@ -1,19 +1,23 @@
+import { ELanguages, ESpecialization, EWeekDays } from "@/types/enums";
+import { NAME_WITH_SPACE_REGEX, PHONE_NUMBER_REGEX } from "@/utils/constant";
+import { z } from "zod";
+import { imageSchema, type ImageResponse } from "./global.schema";
+
 export type Doctor = {
   id: string;
   createdAt: string;
   name: string;
-  specialization: string;
+  specialization: ESpecialization;
   experience: number;
-  availability: string[];
+  availability: EWeekDays[];
   email: string;
   phone: string;
   address: string;
-  languagesKnown: string[];
+  languagesKnown: ELanguages[];
   degree: string;
   certifications: string[];
-  rating: number;
   consulation: number;
-  profileImage: string | null;
+  profileImage: ImageResponse | null;
 };
 
 export type Meta = {
@@ -30,10 +34,9 @@ export type DoctorsResponse = {
   meta: Meta;
 };
 
-import { ELanguages, ESpecialization, EWeekDays } from "@/types/enums";
-import { NAME_WITH_SPACE_REGEX, PHONE_NUMBER_REGEX } from "@/utils/constant";
-import { z } from "zod";
-import { imageSchema } from "./global.schema";
+export type TSingleDoctor = Doctor & {
+  about: string;
+};
 
 export const createDoctorSchema = z.object({
   name: z
@@ -132,7 +135,6 @@ export const createDoctorSchema = z.object({
     )
     .optional(),
 
-  
   consulation: z.coerce
     .number({
       required_error: "Consultation fee is required",

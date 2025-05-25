@@ -189,21 +189,12 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
 
       <Separator orientation="vertical" className="mx-1 h-6" />
 
-      <Button
-      type='button'
-        variant="ghost"
-        size="icon"
-        onClick={setLink}
-        className={editor.isActive("link") ? "bg-muted" : ""}
-      >
-        <LinkIcon className="h-4 w-4" />
-      </Button>
 
       <label
         htmlFor="upload-image"
         className={buttonVariants({ variant: "ghost", size: "icon" })}
       >
-        <ImageIcon className="h-4 w-4" />
+        <ImageIcon className="h-6 w-6" />
         <input
           type="file"
           accept="image/*"

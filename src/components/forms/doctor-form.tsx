@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -30,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   createDoctorSchema,
   doctorFormDefaultValues,
@@ -40,30 +39,43 @@ import { ELanguages, ESpecialization, EWeekDays } from "@/types/enums";
 
 import MultiSelect from "./multi-select";
 import { useAppMutation } from "@/utils/react-query";
+import type { ImageResponse } from "@/schema/global.schema";
+import { useQueryClient } from "@tanstack/react-query";
 
-export default function DoctorForm() {
+export default function DoctorForm({
+  defaultValues,
+  uploadedImage,
+}: {
+  defaultValues?: CreateDoctorInput;
+  uploadedImage?: ImageResponse | null;
+}) {
+  const navigate = useNavigate();
+  const params = useParams();
+const queryClient = useQueryClient();
   const { mutate: createDoctor, isPending } = useAppMutation({
-    type: "post",
-    url: "/doctors",
-    onSuccess: (data) => {
-      console.log(data);
+    type: defaultValues ? "patch" : "post",
+    url: defaultValues ? `/doctors/${params.id}` : "/doctors",
+    onSuccess: () => {
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["doctor",params.id] });
+      navigate("/doctors");
     },
   });
 
   const form = useForm<CreateDoctorInput>({
     resolver: zodResolver(createDoctorSchema),
-    defaultValues: doctorFormDefaultValues,
+    defaultValues: defaultValues ?? doctorFormDefaultValues,
   });
 
   function onSubmit(data: CreateDoctorInput) {
-    createDoctor(data);
+    // Call the mutation with the processed data
+    createDoctor({ data });
   }
 
   function handleAboutChange(html: string) {
     form.setValue("about", html);
   }
 
-  console.log(form.formState.errors);
   return (
     <div className="space-y-6">
       <div className="flex items-center">
@@ -90,7 +102,10 @@ export default function DoctorForm() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <FileUpload name="profileImageId" />
+                  <FileUpload
+                    currentImage={uploadedImage}
+                    name="profileImageId"
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -108,7 +123,9 @@ export default function DoctorForm() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel>
+                          Full Name<span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Dr. John Smith" {...field} />
                         </FormControl>
@@ -116,17 +133,18 @@ export default function DoctorForm() {
                       </FormItem>
                     )}
                   />
-
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="specialization"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Specialty</FormLabel>
+                          <FormLabel>
+                            Specialty<span className="text-red-500">*</span>
+                          </FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value} // Use value instead of defaultValue
                           >
                             <FormControl>
                               <SelectTrigger className="w-full capitalize">
@@ -151,13 +169,15 @@ export default function DoctorForm() {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="degree"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Qualifications</FormLabel>
+                          <FormLabel>
+                            Qualifications
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input placeholder="MD, PhD" {...field} />
                           </FormControl>
@@ -166,13 +186,14 @@ export default function DoctorForm() {
                       )}
                     />
                   </div>
-
                   <FormField
                     control={form.control}
                     name="experience"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Experience</FormLabel>
+                        <FormLabel>
+                          Experience<span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="15 years"
@@ -184,13 +205,14 @@ export default function DoctorForm() {
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
                     name="languagesKnown"
                     render={() => (
                       <FormItem>
-                        <FormLabel>Languages Known</FormLabel>
+                        <FormLabel>
+                          Languages Known<span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <MultiSelect
                             name="languagesKnown"
@@ -204,6 +226,44 @@ export default function DoctorForm() {
                         </FormControl>
                         <FormDescription>
                           Select the languages the doctor can communicate in
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="certifications"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Certifications</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="e.g. Board Certified, Fellow of XYZ"
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value.trim()) {
+                                field.onChange(
+                                  value
+                                    .split(",")
+                                    .map((cert) => cert.trim())
+                                    .filter(Boolean)
+                                );
+                              } else {
+                                field.onChange([]);
+                              }
+                            }}
+                            value={
+                              Array.isArray(field.value)
+                                ? field.value.join(", ")
+                                : ""
+                            }
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Enter certifications or awards received by the doctor
+                          separated by commas (optional)
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -226,13 +286,18 @@ export default function DoctorForm() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>
+                            Email<span className="text-red-500">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="doctor@hospital.com"
                               {...field}
                             />
                           </FormControl>
+                          <FormDescription>
+                            Enter active email address of the doctor
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -243,15 +308,16 @@ export default function DoctorForm() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone</FormLabel>
+                          <FormLabel>
+                            Phone<span className="text-red-500">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input placeholder="(123) 456-7890" {...field} />
                           </FormControl>
                           <FormDescription>
                             Enter the phone number with country code
-                            </FormDescription>
+                          </FormDescription>
                           <FormMessage />
-                          
                         </FormItem>
                       )}
                     />
@@ -261,7 +327,9 @@ export default function DoctorForm() {
                     name="address"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Address</FormLabel>
+                        <FormLabel>
+                          Address<span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Enter address" {...field} />
                         </FormControl>
@@ -274,7 +342,9 @@ export default function DoctorForm() {
                     name="consulation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Consulation Fee</FormLabel>
+                        <FormLabel>
+                          Consulation Fee<span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -292,7 +362,9 @@ export default function DoctorForm() {
                     name="availability"
                     render={() => (
                       <FormItem>
-                        <FormLabel>Availability</FormLabel>
+                        <FormLabel>
+                          Availability<span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <MultiSelect
                             name="availability"
@@ -317,7 +389,9 @@ export default function DoctorForm() {
 
               <Card className="mt-6">
                 <CardHeader>
-                  <CardTitle>Biography</CardTitle>
+                  <CardTitle>
+                    Biography<span className="text-red-500">*</span>
+                  </CardTitle>
                   <CardDescription>
                     Write a detailed biography of the doctor
                   </CardDescription>
@@ -326,20 +400,22 @@ export default function DoctorForm() {
                   <FormField
                     control={form.control}
                     name="about"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <TiptapEditor
-                            content={field.value}
-                            onChange={handleAboutChange}
-                            placeholder="Write the doctor's bio here..."
-                            className="min-h-[300px]"
-                          />
-                          {/* <Editor /> */}
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormControl>
+                            <TiptapEditor
+                              content={field.value}
+                              onChange={handleAboutChange}
+                              placeholder="Write the doctor's bio here..."
+                              className="min-h-[300px]"
+                            />
+                            {/* <Editor /> */}
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                 </CardContent>
               </Card>

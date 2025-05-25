@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useDebounce } from "./debounce";
 
 type Props = {
   placeholder?: string;
@@ -13,6 +15,18 @@ export default function SearchInput({
   placeholder = "Search...",
 }: Props) {
   const [searchParam, setSearchParam] = useSearchParams();
+  const [search, setSearch] = useState(searchParam.get("search") || "");
+
+  const debouncedSearch = useDebounce(search, 300);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      searchParam.set("search", debouncedSearch);
+    } else {
+      searchParam.delete("search");
+    }
+    setSearchParam(searchParam, { replace: true });
+  }, [debouncedSearch, searchParam, setSearchParam]);
 
   return (
     <div className="flex items-center">
@@ -21,11 +35,8 @@ export default function SearchInput({
         <Input
           placeholder={placeholder}
           className="pl-8"
-          value={searchParam.get("search") || ""}
-          onChange={(e) => {
-            searchParam.set("search", e.target.value);
-            setSearchParam(searchParam);
-          }}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
     </div>

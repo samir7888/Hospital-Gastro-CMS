@@ -27,34 +27,48 @@ export function FileUpload({
 }: FileUploadProps) {
   const form = useFormContext();
   const axios = useAxiosAuth();
-
+  const [progress, setProgress] = useState<number>(0);
   const [preview, setPreview] = useState<TImagePreview>(currentImage || null);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[], rejectedFiles: any[]) => {
       const formData = new FormData();
-
       for (const file of acceptedFiles) {
         formData.append("images", file);
       }
-      const res = await axios.post("/upload/images", formData);
 
-      if (res.status === 201) {
-        const images = res.data.files;
-        if (maxCount > 1) {
-          form.setValue(
-            name,
-            images?.map((file: any) => file.id)
-          );
-          setPreview((prev) => {
-            return Array.isArray(prev) ? [...prev, ...images] : images;
-          });
-        } else {
-          form.setValue(name, images[0]?.id);
-          setPreview(images[0]);
+      try {
+        const res = await axios.post("/upload/images", formData, {
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || 1)
+            );
+            setProgress(percent);
+          },
+        });
+
+        if (res.status === 201) {
+          const images = res.data.files;
+          if (maxCount > 1) {
+            form.setValue(
+              name,
+              images?.map((file: any) => file.id)
+            );
+            setPreview((prev) =>
+              Array.isArray(prev) ? [...prev, ...images] : images
+            );
+          } else {
+            form.setValue(name, images[0]?.id);
+            setPreview(images[0]);
+          }
         }
+      } catch (error) {
+        form.setError(name, {
+          message: "File upload failed. Please try again.",
+        });
+      } finally {
+        setProgress(0); // reset progress after upload
       }
-
       if (rejectedFiles.length > 0) {
         const errors = rejectedFiles[0].errors;
         if (errors.some((e: any) => e.code === "file-too-large")) {
@@ -113,6 +127,17 @@ export function FileUpload({
         </div>
       )}
 
+      {progress > 0 && (
+        <div className="mt-2 w-full">
+          <div className="h-2 bg-muted rounded">
+            <div
+              className="h-full bg-primary rounded transition-all"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">{progress}%</p>
+        </div>
+      )}
       <ImagePreview preview={preview} name={name} setPreview={setPreview} />
     </div>
   );
@@ -148,7 +173,7 @@ function ImagePreview({
   if ("url" in preview) {
     return (
       <div className="relative flex items-center justify-center rounded-lg overflow-hidden border min-h-[300px]">
-        <img src={preview.url + "?w=300"} alt="Preview" />
+        <img src={preview?.url + "?w=300"} alt="Preview" />
         <Button
           variant="destructive"
           size="icon"

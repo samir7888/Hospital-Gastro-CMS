@@ -3,7 +3,7 @@ import type { TSingleDoctor } from "@/schema/Doctors";
 import { useAppQuery } from "@/utils/react-query";
 import { useParams } from "react-router-dom";
 
-const DoctorCreatePage = () => {
+const SingleDoctorPage = () => {
   const { id } = useParams<{ id?: string }>();
 
   const { data, isLoading } = useAppQuery<TSingleDoctor>({
@@ -29,4 +29,4 @@ const DoctorCreatePage = () => {
   );
 };
 
-export default DoctorCreatePage;
+export default SingleDoctorPage;

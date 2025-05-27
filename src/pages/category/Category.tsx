@@ -15,14 +15,17 @@ const createCategorySchema = z.object({
       invalid_type_error: "Name must be a string",
     })
     .min(3, { message: "Name must be between 3 and 50 characters" })
-    .max(50, { message: "Name must be between 3 and 50 characters" }),
+    .max(50, { message: "Name must be between 3 and 50 characters" })
+    .trim(),
 });
 type CreateCategorySchemaType = z.infer<typeof createCategorySchema>;
 
 const CategoryPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
   const params = useParams();
 
   // Category management states
@@ -54,33 +57,28 @@ const CategoryPage = () => {
     },
   });
 
-  const handleCreateCategory = async ({
-    name,
-    value,
-  }: {
-    name: string;
-    value: string;
-  }) => {
-    const data = { name, value };
-    createCategory({ data });
+  const handleCreateCategory = async ({ name }: { name: string }) => {
+    createCategory({ data: { name } });
   };
 
-  const { mutateAsync: deleteCategory, isPending: isDeleting } = useAppMutation({
-    type: "delete",
-    url:  `/blog-categories/${params.id}`,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blog-categories"] });
-      navigate("/news/categories");
-    },
-    onError: (error) => {
-      console.error("Delete failed:", error);
-    },
-  });
+  const { mutateAsync: deleteCategory, isPending: isDeleting } = useAppMutation(
+    {
+      type: "delete",
+      url: `/blog-categories`,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["blog-categories"] });
+        navigate("/news/category");
+      },
+      onError: (error) => {
+        console.error("Delete failed:", error);
+      },
+    }
+  );
 
   // Fixed edit mutation - should use category ID from parameter
   const { mutateAsync: editCategory, isPending: isEditing } = useAppMutation({
     type: "patch",
-    url:  `/blog-categories/${params.id}`,
+    url: `/blog-categories/${params.id}`,
     onSuccess: () => {
       setEditingCategory(null);
       setEditCategoryName("");
@@ -93,7 +91,7 @@ const CategoryPage = () => {
 
   const handleEditCategory = async () => {
     if (!editCategoryName.trim()) return;
-    
+
     const data = { name: editCategoryName.trim() };
     try {
       await editCategory({ data });
@@ -102,11 +100,9 @@ const CategoryPage = () => {
     }
   };
 
-  const handleDeleteCategory = async () => {
-   
-    
+  const handleDeleteCategory = async (id: string) => {
     try {
-      await deleteCategory({});
+      deleteCategory({ id }); // Pass the ID from params
     } catch (error) {
       console.error("Error deleting category:", error);
     }
@@ -169,7 +165,6 @@ const CategoryPage = () => {
                     onClick={() =>
                       handleCreateCategory({
                         name: newCategoryName,
-                        value: newCategoryName,
                       })
                     }
                     disabled={!newCategoryName.trim()}
@@ -263,9 +258,7 @@ const CategoryPage = () => {
                           </button>
                           <button
                             onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/news/category/${category.id}`);
-                              handleDeleteCategory();
+                              handleDeleteCategory(category.id);
                             }}
                             disabled={isDeleting}
                             className="p-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded disabled:opacity-50"

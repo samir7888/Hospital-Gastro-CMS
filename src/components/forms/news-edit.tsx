@@ -65,12 +65,6 @@ export default function NewsEventEditPage({
   });
 
   function onSubmit(data: NewsEventFormSchemaValues) {
-    // Check if all required fields are present
-    if (!data.title || !data.content) {
-      console.error("Missing required fields");
-      return;
-    }
-
     createBlog({ data });
   }
 
@@ -80,24 +74,10 @@ export default function NewsEventEditPage({
     form.trigger("content");
   }
 
-  // Add form submission handler with error logging
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    form.handleSubmit(
-      (data) => {
-        
-        onSubmit(data);
-      },
-      (errors) => {
-        console.error("Form validation failed:", errors);
-      }
-    )(e);
-  };
-
   return (
     <div className="space-y-6">
       <Form {...form}>
-        <form onSubmit={handleFormSubmit} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <Card>
@@ -113,7 +93,9 @@ export default function NewsEventEditPage({
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title<span className="text-red-500">*</span></FormLabel>
+                        <FormLabel>
+                          Title<span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Enter a title" {...field} />
                         </FormControl>
@@ -127,7 +109,9 @@ export default function NewsEventEditPage({
                     name="summary"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Summary<span className="text-red-500">*</span></FormLabel>
+                        <FormLabel>
+                          Summary<span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Brief summary (max 200 characters)"
@@ -145,28 +129,15 @@ export default function NewsEventEditPage({
                   />
 
                   {/* Wrap CategorySelect in FormField for proper form integration */}
-                  <FormField
-                    control={form.control}
-                    name="categoryId" // Make sure this matches your schema
-                    render={() => (
-                      <FormItem>
-                        <FormLabel>Category<span className="text-red-500">*</span></FormLabel>
-                        <FormControl>
-                          <CategorySelect
-                            fieldName="categoryId"
-                            placeholder="Select a category..."
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <CategorySelect />
                 </CardContent>
               </Card>
 
               <Card className="mt-6">
                 <CardHeader>
-                  <CardTitle>Content<span className="text-red-500">*</span></CardTitle>
+                  <CardTitle>
+                    Content<span className="text-red-500">*</span>
+                  </CardTitle>
                   <CardDescription>
                     Write the full content for this item
                   </CardDescription>

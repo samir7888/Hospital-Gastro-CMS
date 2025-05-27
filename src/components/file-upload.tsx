@@ -63,13 +63,14 @@ export function FileUpload({
           }
         }
       } catch (error) {
+        
         form.setError(name, {
           message: "File upload failed. Please try again.",
         });
       } finally {
         setProgress(0); // reset progress after upload
       }
-      if (rejectedFiles.length > 0) {
+      if (rejectedFiles.length > 0) {t
         const errors = rejectedFiles[0].errors;
         if (errors.some((e: any) => e.code === "file-too-large")) {
           form.setError(name, {

@@ -22,8 +22,10 @@ export const useAppMutation = ({
   const axios = useAxiosAuth();
 
   return useMutation({
-    mutationFn: async ({ data }: { data?: any }) => {
-      const res = await axios[type](url, data);
+    mutationFn: async ({ data, id }: { data?: any; id?: string }) => {
+      const formattedUrl = id ? `${url}/${id}` : url;
+
+      const res = await axios[type](formattedUrl, data);
       return res.data;
     },
     onSuccess,

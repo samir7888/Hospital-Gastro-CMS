@@ -21,10 +21,19 @@ const NewsAndEventsPage = () => {
   if (!!id && !data) {
     return <div>Blogs not found</div>;
   }
+
+  const defaultValues = data
+    ? {
+        ...data,
+        categoryId: data.category.id,
+        featuredImageId: data.featuredImage?.id,
+      }
+    : data;
+
   return (
     <div>
       <NewsEventEditPage
-        defaultValues={data}
+        defaultValues={defaultValues}
         uploadedFeaturedImage={data?.featuredImage}
         uploadedCoverImage={data?.coverImage}
       />

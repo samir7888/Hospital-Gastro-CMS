@@ -22,7 +22,7 @@ export type BaseNewsAndEvents = {
   title: string;
   slug: string;
   summary: string;
-  featuredImage: ImageInfo | null;
+  featuredImage: ImageInfo;
   coverImage: ImageInfo | null;
   category: Category;
   content: string;

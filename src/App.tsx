@@ -17,6 +17,7 @@ import HeroPage from "./pages/pages/page";
 import Settings from "./pages/settings/Settings";
 import SingleDoctorPage from "./pages/doctors/SingleDoctorPage";
 import CategoryPage from "./pages/category/Category";
+import FaqEditPage from "./pages/faq/faq-edit";
 
 function App() {
   return (
@@ -32,8 +33,10 @@ function App() {
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/appointments/:id" element={<Appointment />} />
           <Route path="/faq" element={<Faq />} />
+          <Route path="/faq/new" element={<FaqEditPage />} />
           <Route path="/features" element={<Feature />} />
           <Route path="/testimonials" element={<Testimonials />} />
+          <Route path="/testimonials/new" element={<SingleTestimonial />} />
           <Route path="/testimonials/:id" element={<SingleTestimonial />} />
           <Route path="/news/category" element={<CategoryPage />} />
           <Route path="/news/category/:id" element={<CategoryPage />} />

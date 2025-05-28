@@ -70,7 +70,7 @@ export function FileUpload({
       } finally {
         setProgress(0); // reset progress after upload
       }
-      if (rejectedFiles.length > 0) {t
+      if (rejectedFiles.length > 0) {
         const errors = rejectedFiles[0].errors;
         if (errors.some((e: any) => e.code === "file-too-large")) {
           form.setError(name, {

@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Doctors from "./pages/doctors/Doctors";
 import Appointments from "./pages/appointments/Appointments";
 import Appointment from "./pages/appointments/Appointment";
-import Faq from "./pages/faq/Faq";
-import Feature from "./pages/features/Feature";
+// import Faq from "./pages/faq/Faq";
+import Feature from "./pages/features/SingleServicePage";
 import Testimonials from "./testimonials/Testimonials";
 import SingleTestimonial from "./testimonials/SingleTestimonial";
 import SingleNewsPage from "./pages/news/SingleNewsPage";
@@ -17,7 +17,10 @@ import HeroPage from "./pages/pages/page";
 import Settings from "./pages/settings/Settings";
 import SingleDoctorPage from "./pages/doctors/SingleDoctorPage";
 import CategoryPage from "./pages/category/Category";
-import FaqEditPage from "./pages/faq/faq-edit";
+// import FAQSection from "./pages/faq/Faq";
+import FAQPage from "./pages/faq/FAQSection";
+import ServicesPage from "./pages/features/SingleServicePage";
+import ServicesListPage from "./pages/features/ServicesPage";
 
 function App() {
   return (
@@ -32,9 +35,10 @@ function App() {
           <Route path="/doctors/:id" element={<SingleDoctorPage />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/appointments/:id" element={<Appointment />} />
-          <Route path="/faq" element={<Faq />} />
-          <Route path="/faq/new" element={<FaqEditPage />} />
-          <Route path="/features" element={<Feature />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/services" element={<ServicesListPage />} />
+          <Route path="/services/create" element={<ServicesPage />} />
+          <Route path="/services/edit/:id" element={<ServicesPage />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/testimonials/new" element={<SingleTestimonial />} />
           <Route path="/testimonials/:id" element={<SingleTestimonial />} />

@@ -34,5 +34,5 @@ export type FaqSchemaValues = z.infer<typeof faqSchema>;
 export const faqFormDefaultValues: Partial<FaqSchemaValues> = {
   title: "",
   description: "",
-  category: EFaqType.Billing,
+  category: EFaqType.General,
 };

@@ -51,15 +51,15 @@ export enum ELanguages {
     Japanese = 'japanese',
 }
 
-export enum EFaqType {
-    General = 'general',
-    Doctor = 'doctor',
-    Patient = 'patient',
-    Insurance = 'insurance',
-    Billing = 'billing',
-    Facility = 'facility',
-    EmergencyCare = 'emergency_care',
-}
+    export enum EFaqType {
+        General = 'general',
+        Doctor = 'doctor',
+        Patient = 'patient',
+        Insurance = 'insurance',
+        Billing = 'billing',
+        Facility = 'facility',
+        EmergencyCare = 'emergency_care',
+    }
 
 export enum ESocialNetwork {
     Facebook = 'facebook',

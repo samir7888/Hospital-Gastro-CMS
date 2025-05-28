@@ -51,8 +51,8 @@ export function Sidebar({ open }: SidebarProps) {
     },
 
     {
-      title: "Features",
-      to: "/features",
+      title: "Services",
+      to: "/services",
       icon: <Award className="h-5 w-5" />,
     },
     {

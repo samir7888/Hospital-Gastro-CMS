@@ -1,12 +1,5 @@
 import type { Meta } from "@/schema/Doctors";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "../ui/pagination";
+
 import { useSearchParams } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";

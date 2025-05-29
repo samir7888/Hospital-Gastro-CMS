@@ -14,6 +14,8 @@ import {
   ChevronRight,
   X,
   CircleHelp,
+  Group,
+  Text,
 } from "lucide-react";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -42,12 +44,17 @@ export function Sidebar({ open }: SidebarProps) {
     {
       title: "Website Title",
       to: "/title",
-      icon: <Layout className="h-5 w-5" />,
+      icon: <Text className="h-5 w-5" />,
     },
     {
       title: "Pages",
       to: "/pages",
       icon: <Layout className="h-5 w-5" />,
+    },
+    {
+      title: "Comapany Info",
+      to: "/company-info",
+      icon: <Group className="h-5 w-5" />,
     },
 
     {

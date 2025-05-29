@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useFieldArray } from "react-hook-form";
+import type { UseFormReturn } from "react-hook-form";
 import {
   Card,
   CardContent,
@@ -17,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,7 +30,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import type{DragEndEvent} from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
   sortableKeyboardCoordinates,
@@ -40,17 +39,20 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const journeyItemSchema = z.object({
-  year: z.number().int().positive("Year must be a positive number"),
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-});
+interface JourneyItem {
+  title: string;
+  description: string;
+}
 
-const journeySchema = z.object({
-  milestones: z.array(journeyItemSchema),
-});
+interface JourneyValues {
+  journey: JourneyItem[];
+}
 
-type JourneyValues = z.infer<typeof journeySchema>;
+interface JourneySectionProps {
+  form: UseFormReturn<JourneyValues>;
+  onSubmit: (data: JourneyValues) => void;
+  isLoading: boolean;
+}
 
 interface SortableMilestoneProps {
   id: string;
@@ -97,57 +99,42 @@ function SortableMilestone({ id, index, control, onRemove }: SortableMilestonePr
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField
-          control={control}
-          name={`milestones.${index}.year`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Year</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="E.g., 2005"
-                  {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value) || "")}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name={`milestones.${index}.title`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="E.g., Research Center"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+      <FormField
+        control={control}
+        name={`journey.${index}.title`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Title</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="E.g., New Research Center Opened"
+                {...field}
+              />
+            </FormControl>
+            <FormDescription>
+              Title for this milestone (3-100 characters)
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
       <FormField
         control={control}
-        name={`milestones.${index}.description`}
+        name={`journey.${index}.description`}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Description</FormLabel>
             <FormControl>
               <Textarea
-                placeholder="Describe this milestone..."
+                placeholder="Describe this milestone in detail..."
                 {...field}
                 rows={3}
               />
             </FormControl>
+            <FormDescription>
+              Detailed description of this milestone (10-500 characters)
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -156,44 +143,13 @@ function SortableMilestone({ id, index, control, onRemove }: SortableMilestonePr
   );
 }
 
-export default function JourneySection() {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const form = useForm<JourneyValues>({
-    resolver: zodResolver(journeySchema),
-    defaultValues: {
-      milestones: [
-        {
-          year: 1988,
-          title: "Foundation",
-          description: "Established as a small community hospital with a vision to provide quality healthcare services.",
-        },
-        {
-          year: 1995,
-          title: "Major Expansion",
-          description: "Expanded facilities to include specialized departments and state-of-the-art equipment.",
-        },
-        {
-          year: 2005,
-          title: "Research Center",
-          description: "Opened our dedicated research center focusing on innovative medical treatments.",
-        },
-        {
-          year: 2015,
-          title: "Digital Transformation",
-          description: "Implemented advanced digital health systems and telehealth capabilities.",
-        },
-        {
-          year: 2025,
-          title: "Future Vision",
-          description: "Continuing to expand our services and embrace cutting-edge medical technologies.",
-        },
-      ],
-    },
-  });
-
+export default function JourneySection({
+  form,
+  onSubmit,
+  isLoading,
+}: JourneySectionProps) {
   const { fields, append, remove, move } = useFieldArray({
-    name: "milestones",
+    name: "journey",
     control: form.control,
   });
 
@@ -203,15 +159,6 @@ export default function JourneySection() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-
-  function onSubmit(data: JourneyValues) {
-    setIsLoading(true);
-    // In a real app, you would save the form data to your API
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log("Journey saved:", data);
-    }, 1000);
-  }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -229,7 +176,7 @@ export default function JourneySection() {
       <CardHeader>
         <CardTitle>Our Journey</CardTitle>
         <CardDescription>
-          Document your hospital's journey through the years
+          Document your hospital's journey and key milestones (maximum 10 milestones)
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -242,34 +189,50 @@ export default function JourneySection() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => append({ year: new Date().getFullYear(), title: "", description: "" })}
+                  onClick={() => append({ 
+                    title: "", 
+                    description: "" 
+                  })}
+                  disabled={fields.length >= 10}
                 >
                   <Plus className="h-4 w-4 mr-1" /> Add Milestone
                 </Button>
               </div>
 
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={fields.map(field => field.id)}
-                  strategy={verticalListSortingStrategy}
+              {fields.length > 0 ? (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
                 >
-                  <div className="space-y-4">
-                    {fields.map((field, index) => (
-                      <SortableMilestone
-                        key={field.id}
-                        id={field.id}
-                        index={index}
-                        control={form.control}
-                        onRemove={() => remove(index)}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
+                  <SortableContext
+                    items={fields.map(field => field.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-4">
+                      {fields.map((field, index) => (
+                        <SortableMilestone
+                          key={field.id}
+                          id={field.id}
+                          index={index}
+                          control={form.control}
+                          onRemove={() => remove(index)}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No milestones added yet. Click "Add Milestone" to get started.</p>
+                </div>
+              )}
+
+              {fields.length >= 10 && (
+                <p className="text-sm text-amber-600">
+                  Maximum of 10 milestones reached.
+                </p>
+              )}
             </div>
 
             <div className="flex justify-end">

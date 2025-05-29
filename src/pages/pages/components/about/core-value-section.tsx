@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useFieldArray } from "react-hook-form";
+import type { UseFormReturn } from "react-hook-form";
 import {
   Card,
   CardContent,
@@ -17,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,60 +23,37 @@ import {
 } from "@/components/ui/form";
 import { Plus, Trash2 } from "lucide-react";
 
-const coreValueSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-});
+interface CoreValue {
+  title: string;
+  description: string;
+}
 
-const coreValuesSchema = z.object({
-  values: z.array(coreValueSchema).min(1, "At least one core value is required"),
-});
+interface CoreValuesValues {
+  coreValues: CoreValue[];
+}
 
-type CoreValuesFormValues = z.infer<typeof coreValuesSchema>;
+interface CoreValuesSectionProps {
+  form: UseFormReturn<CoreValuesValues>;
+  onSubmit: (data: CoreValuesValues) => void;
+  isLoading: boolean;
+}
 
-export default function CoreValuesSection() {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const form = useForm<CoreValuesFormValues>({
-    resolver: zodResolver(coreValuesSchema),
-    defaultValues: {
-      values: [
-        {
-          title: "Excellence",
-          description: "We strive for excellence in every aspect of patient care, maintaining the highest standards of medical practice and professional conduct.",
-        },
-        {
-          title: "Compassion",
-          description: "We treat each patient with kindness, empathy, and respect, understanding their unique needs and concerns.",
-        },
-        {
-          title: "Innovation",
-          description: "We embrace advanced medical technologies and innovative treatments to provide the best possible care for our patients.",
-        },
-      ],
-    },
-  });
-
+export default function CoreValuesSection({
+  form,
+  onSubmit,
+  isLoading,
+}: CoreValuesSectionProps) {
   const { fields, append, remove } = useFieldArray({
-    name: "values",
+    name: "coreValues",
     control: form.control,
   });
-
-  function onSubmit(data: CoreValuesFormValues) {
-    setIsLoading(true);
-    // In a real app, you would save the form data to your API
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log("Core values saved:", data);
-    }, 1000);
-  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Core Values</CardTitle>
         <CardDescription>
-          Define the core values that guide your hospital's practices
+          Define the core values that guide your hospital's practices (maximum 10 values)
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -91,63 +67,81 @@ export default function CoreValuesSection() {
                   variant="outline"
                   size="sm"
                   onClick={() => append({ title: "", description: "" })}
+                  disabled={fields.length >= 10}
                 >
                   <Plus className="h-4 w-4 mr-1" /> Add Value
                 </Button>
               </div>
 
-              <div className="space-y-4">
-                {fields.map((field, index) => (
-                  <div key={field.id} className="border rounded-md p-4 space-y-4 bg-white">
-                    <div className="flex justify-end">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => remove(index)}
-                        disabled={fields.length === 1}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
+              {fields.length > 0 ? (
+                <div className="space-y-4">
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="border rounded-md p-4 space-y-4 bg-white">
+                      <div className="flex justify-end">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => remove(index)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name={`coreValues.${index}.title`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Title</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="E.g., Excellence"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Title for this core value (3-100 characters)
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name={`coreValues.${index}.description`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Describe this core value and how it guides your hospital's practices..."
+                                {...field}
+                                rows={3}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Detailed description of this core value (10-500 characters)
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No core values added yet. Click "Add Value" to get started.</p>
+                </div>
+              )}
 
-                    <FormField
-                      control={form.control}
-                      name={`values.${index}.title`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Title</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="E.g., Excellence"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`values.${index}.description`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Describe this core value..."
-                              {...field}
-                              rows={3}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                ))}
-              </div>
+              {fields.length >= 10 && (
+                <p className="text-sm text-amber-600">
+                  Maximum of 10 core values reached.
+                </p>
+              )}
             </div>
 
             <div className="flex justify-end">

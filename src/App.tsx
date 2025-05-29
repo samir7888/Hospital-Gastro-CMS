@@ -3,7 +3,6 @@ import Doctors from "./pages/doctors/Doctors";
 import Appointments from "./pages/appointments/Appointments";
 import Appointment from "./pages/appointments/Appointment";
 // import Faq from "./pages/faq/Faq";
-import Feature from "./pages/features/SingleServicePage";
 import Testimonials from "./testimonials/Testimonials";
 import SingleTestimonial from "./testimonials/SingleTestimonial";
 import SingleNewsPage from "./pages/news/SingleNewsPage";
@@ -21,6 +20,7 @@ import CategoryPage from "./pages/category/Category";
 import FAQPage from "./pages/faq/FAQSection";
 import ServicesPage from "./pages/features/SingleServicePage";
 import ServicesListPage from "./pages/features/ServicesPage";
+import CompanyInfoPage from "./pages/CompanyInfoPage";
 
 function App() {
   return (
@@ -36,6 +36,8 @@ function App() {
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/appointments/:id" element={<Appointment />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/company-info" element={<CompanyInfoPage />} />
+
           <Route path="/services" element={<ServicesListPage />} />
           <Route path="/services/create" element={<ServicesPage />} />
           <Route path="/services/edit/:id" element={<ServicesPage />} />

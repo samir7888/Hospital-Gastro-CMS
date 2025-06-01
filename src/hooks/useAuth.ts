@@ -11,24 +11,11 @@
 
 // export default useAxiosAuth;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 import axios from "axios";
 import { BASEURL } from "../utils/constant";
 import { useAuth } from "@/context/auth-context";
 const useAxiosAuth = () => {
-  const { accessToken,setAccessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
 
   const axiosInstance = axios.create({
     baseURL: BASEURL,
@@ -60,7 +47,6 @@ const useAxiosAuth = () => {
             {},
             { withCredentials: true }
           );
-          console.log(res)
           if (setAccessToken) {
             setAccessToken(res.data.accessToken); // Update token in context
           }

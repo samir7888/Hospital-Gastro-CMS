@@ -31,7 +31,6 @@ import type {
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Pagination } from "@/components/ui/pagination";
 import PaginationComponent from "@/components/pagination/pagination";
 import SearchInput from "@/components/helpers/search-input";
 

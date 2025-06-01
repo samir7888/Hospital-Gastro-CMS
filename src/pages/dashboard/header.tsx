@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/auth-context";
+import useAxiosAuth from "@/hooks/useAuth";
 // import { useTheme } from "next-themes";
 
 interface HeaderProps {
@@ -20,7 +21,13 @@ interface HeaderProps {
 
 export function Header({ toggleSidebar }: HeaderProps) {
   // const { setTheme } = useTheme();
-  const { logout } = useAuth();
+  const { setAccessToken, setUser } = useAuth();
+  const axios = useAxiosAuth();
+  const logout = async () => {
+    await axios.post(`/auth/logout`);
+    setUser(null);
+    setAccessToken(null);
+  };
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center shadow-xl bg-white  px-4 lg:px-6">
       <Button
@@ -43,17 +50,25 @@ export function Header({ toggleSidebar }: HeaderProps) {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem>
               <Link
                 to="/login"
                 onClick={() => {
                   logout();
-                
                 }}
               >
                 Log out
               </Link>
             </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/change-password">Change Password</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/change-email">Change Email</Link>
+            </DropdownMenuItem>
+            {/* <DropdownMenuItem>
+              <Link to="/reset-password">Reset Password</Link>
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

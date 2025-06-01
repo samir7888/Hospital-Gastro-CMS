@@ -21,16 +21,21 @@ import FAQPage from "./pages/faq/FAQSection";
 import ServicesPage from "./pages/features/SingleServicePage";
 import ServicesListPage from "./pages/features/ServicesPage";
 import CompanyInfoPage from "./pages/CompanyInfoPage";
-import ForgotPassword from "./pages/auth/forget-password";
+import ChangePassword from "./pages/auth/change-password";
+import ResetPassword from "./pages/auth/reset-password";
+import UpdateEmailForm from "./pages/auth/change-email";
+import ForgetPasswordPage from "./pages/auth/forget-password";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Home />} />
-          <Route path='/forget-password' element={<ForgotPassword />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgetPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+
           {/* Protected Routes */}
           <Route
             element={
@@ -61,6 +66,8 @@ function App() {
             <Route path="/news/new" element={<SingleNewsPage />} />
             <Route path="/title" element={<TitlePage />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/change-email" element={<UpdateEmailForm />} />
           </Route>
         </Routes>
       </AuthProvider>

@@ -26,19 +26,19 @@ import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PaginationComponent from "@/components/pagination/pagination";
-import SearchInput from "@/components/search/search-input";
+import SearchInput from "@/components/helpers/search-input";
 
 export default function ServicesListPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [deletingId, setDeletingId] = useState<string | null>(null);
-const [searchParam] = useSearchParams();    
+  const [searchParam] = useSearchParams();
   const {
     data: servicesResponse,
     isLoading,
     error,
   } = useAppQuery<ServicesResponse>({
-    url:`/services?${searchParam.toString()}`,
+    url: `/services?${searchParam.toString()}`,
     queryKey: ["services", searchParam.toString()],
   });
 
@@ -112,7 +112,9 @@ const [searchParam] = useSearchParams();
         </div>
         <Card>
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <p className="text-destructive mb-4">{error.message || "failed to load"}</p>
+            <p className="text-destructive mb-4">
+              {error.message || "failed to load"}
+            </p>
             <Button
               variant="outline"
               onClick={() =>
@@ -143,7 +145,7 @@ const [searchParam] = useSearchParams();
           Add Service
         </Button>
       </div>
-<SearchInput />
+      <SearchInput />
       {services.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center p-8">
@@ -166,7 +168,7 @@ const [searchParam] = useSearchParams();
         </Card>
       ) : (
         <>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3  ">
             {services.map((service) => (
               <ServiceCard
                 key={service.id}
@@ -180,7 +182,7 @@ const [searchParam] = useSearchParams();
 
           {/* Pagination Info */}
           {servicesResponse?.meta && (
-           <PaginationComponent meta={servicesResponse.meta} />
+            <PaginationComponent meta={servicesResponse.meta} />
           )}
         </>
       )}
@@ -227,7 +229,7 @@ function ServiceCard({
       <CardContent className="space-y-4">
         {/* Cover Image */}
         {service.coverImage?.url && (
-          <div className="aspect-video relative overflow-hidden rounded-md bg-muted">
+          <div className="aspect-[1/1] relative overflow-hidden rounded-md bg-muted">
             <img
               src={service.coverImage.url}
               alt={service.title}

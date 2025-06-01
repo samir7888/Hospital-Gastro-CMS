@@ -105,7 +105,7 @@ export default function AppointmentDetailsPage({
 
       <div className="bg-white rounded-lg shadow-sm border p-6">
         <div className="flex justify-between items-start mb-6">
-          <h1 className="text-2xl font-bold">Appointment #{appointment.id}</h1>
+          <h1 className="text-2xl font-bold">Appointment #{appointment.firstName}</h1>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

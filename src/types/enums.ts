@@ -1,10 +1,6 @@
 export interface AuthUser {
-  firstName: string;
-  lastName: string;
-  profileImage: string | null;
-  accountId: string;
+  name: string;
   email: string;
-  deviceId: string;
 }
 
 export enum EFileMimeType {

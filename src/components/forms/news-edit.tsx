@@ -32,7 +32,7 @@ import {
 } from "@/schema/news-type";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppMutation } from "@/utils/react-query";
-import { CategorySelect } from "../search/single-select";
+import { CategorySelect } from "../helpers/single-select";
 import type { ImageResponse } from "@/schema/global.schema";
 
 export default function NewsEventEditPage({

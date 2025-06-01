@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/auth-context";
 // import { useTheme } from "next-themes";
 
 interface HeaderProps {
@@ -19,7 +20,7 @@ interface HeaderProps {
 
 export function Header({ toggleSidebar }: HeaderProps) {
   // const { setTheme } = useTheme();
-
+  const { logout } = useAuth();
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center shadow-xl bg-white  px-4 lg:px-6">
       <Button
@@ -43,7 +44,15 @@ export function Header({ toggleSidebar }: HeaderProps) {
             <DropdownMenuSeparator />
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link to="/">Log out</Link>
+              <Link
+                to="/login"
+                onClick={() => {
+                  logout();
+                
+                }}
+              >
+                Log out
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

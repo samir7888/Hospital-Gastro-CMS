@@ -1,14 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Calendar,
-  FileText,
-  
-} from "lucide-react";
+import { Plus, Edit, Trash2, Calendar, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
@@ -23,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 import { Link, useSearchParams } from "react-router-dom";
-import SearchInput from "@/components/search/search-input";
+import SearchInput from "@/components/helpers/search-input";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import PaginationComponent from "@/components/pagination/pagination";
 import { useQueryClient } from "@tanstack/react-query";
@@ -31,7 +24,7 @@ import type {
   BaseNewsAndEvents,
   NewsAndEventsResponse,
 } from "@/schema/news-type";
-import CategoryTabs from "@/components/search/category-tabs";
+import CategoryTabs from "@/components/helpers/category-tabs";
 
 export default function NewsAndEventsPage() {
   return (
@@ -128,7 +121,7 @@ function NewsCard({ blogs }: { blogs: BaseNewsAndEvents }) {
 
   return (
     <Card key={blogs.id} className="overflow-hidden group">
-      <div className="aspect-[1/1] relative group overflow-hidden"> 
+      <div className="aspect-[1/1] relative group overflow-hidden">
         <img
           src={blogs?.coverImage?.url}
           alt={blogs.title}
@@ -181,7 +174,6 @@ function NewsCard({ blogs }: { blogs: BaseNewsAndEvents }) {
               </AlertDialogContent>
             </AlertDialog>
           </div>
-       
         </div>
       </div>
       <CardContent className="pt-4 pb-2 flex-1 flex flex-col">

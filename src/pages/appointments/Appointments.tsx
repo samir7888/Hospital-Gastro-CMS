@@ -33,10 +33,9 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import PaginationComponent from "@/components/pagination/pagination";
-import SearchInput from "@/components/search/search-input";
+import SearchInput from "@/components/helpers/search-input";
 
 export default function AppointmentsPage() {
-
   const [filter, setFilter] = useState({
     doctor: "",
     department: "",

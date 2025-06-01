@@ -38,8 +38,8 @@ export default function FAQPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+      <Card className="w-[80vw]">
+        <CardHeader className="flex items-center justify-between ">
           <div>
             <CardTitle>FAQ Questions</CardTitle>
             <CardDescription>
@@ -48,7 +48,7 @@ export default function FAQPage() {
           </div>
           <Button onClick={() => setShowAddDialog(true)}>Add New FAQ</Button>
         </CardHeader>
-        <CardContent>
+        <CardContent className="w-full">
           <FAQList onEdit={handleEdit} />
         </CardContent>
       </Card>

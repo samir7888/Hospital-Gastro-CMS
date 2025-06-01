@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
-import SearchInput from "@/components/search/search-input";
 import type {
   ITestimonial,
   TestimonialResponse,
@@ -25,49 +24,7 @@ import type {
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
-// // Mock data for testimonials
-// const testimonials = [
-//   {
-//     id: "1",
-//     name: "Sarah Johnson",
-//     image:
-//       "https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-//     rating: 5,
-//     department: "Cardiology",
-//     comment:
-//       "The care I received at the cardiology department was exceptional. Dr. Smith and his team were thorough, compassionate, and took the time to explain everything to me. I wouldn't go anywhere else for my heart care.",
-//   },
-//   {
-//     id: "2",
-//     name: "David Wilson",
-//     image:
-//       "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-//     rating: 4,
-//     department: "Orthopedics",
-//     comment:
-//       "After my knee replacement surgery, the recovery process was made much easier thanks to the excellent physical therapy team. They were professional, motivating, and helped me achieve a full recovery.",
-//   },
-//   {
-//     id: "3",
-//     name: "Emily Parker",
-//     image:
-//       "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-//     rating: 5,
-//     department: "Pediatrics",
-//     comment:
-//       "The pediatric staff made my daughter feel so comfortable during her stay. They were not only medically excellent but also showed genuine care and compassion. The child-friendly environment helped reduce her anxiety significantly.",
-//   },
-//   {
-//     id: "4",
-//     name: "Michael Thompson",
-//     image:
-//       "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-//     rating: 4,
-//     department: "Neurology",
-//     comment:
-//       "I was nervous about my neurological testing, but the staff was reassuring and professional. The neurologist took time to thoroughly explain my condition and treatment options. I felt well-informed about my care plan.",
-//   },
-// ];
+
 
 export default function TestimonialsPage() {
   return (
@@ -220,7 +177,6 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
     </Card>
   );
 }
-
 
 function NoTestimonials() {
   return (

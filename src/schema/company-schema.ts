@@ -8,7 +8,8 @@ export const companyInfoSchema = z.object({
   city: z.string().min(1, "City is required"),
   address: z.string().min(1, "Address is required"),
   phone: z.array(
-    z.string({
+    z 
+      .string({
         required_error: "Phone number is required",
         invalid_type_error: "Phone must be a string",
       })

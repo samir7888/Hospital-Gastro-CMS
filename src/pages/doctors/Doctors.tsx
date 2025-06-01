@@ -21,7 +21,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import type { Doctor, DoctorsResponse } from "@/schema/Doctors";
 import { useQueryClient } from "@tanstack/react-query";
-import SearchInput from "@/components/search/search-input";
+import SearchInput from "@/components/helpers/search-input";
 import PaginationComponent from "@/components/pagination/pagination";
 
 export default function DoctorsPage() {

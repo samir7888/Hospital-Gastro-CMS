@@ -144,18 +144,18 @@ export default function TitlePage() {
 
   // Populate form with fetched data
   useEffect(() => {
-    if (settings) {
+    if (generalSettings && privacyPolicy && termsConditions && footerDescription) {
       form.reset({
-        companyName: settings.companyName || "",
-        siteTitle: settings.siteTitle || "",
-        siteDescription: settings.siteDescription || "",
-        footerDescription: settings.footerDescription || "",
-        privacyPolicy: settings.privacyPolicy || "",
+        companyName: generalSettings.companyName || "",
+        siteTitle: generalSettings.siteTitle || "",
+        siteDescription: generalSettings.siteDescription || "",
+        footerDescription: footerDescription.footerDescription || "",
+        privacyPolicy: privacyPolicy.privacyPolicy || "",
         termsAndConditions: termsConditions?.termsAndConditions || "",
-        logoId: settings.logoId || "",
+        logoId: generalSettings.logo?.id || "",
       });
     }
-  }, [settings, form]);
+  }, [generalSettings, form]);
 
   function onSubmit(data: FormValues) {
     updateSettingsMutation.mutate({
@@ -163,7 +163,7 @@ export default function TitlePage() {
     });
   }
 
-  if (error) {
+  if (hasError) {
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -194,7 +194,6 @@ export default function TitlePage() {
         <TabsList className="mb-4">
           <TabsTrigger value="general">General Settings</TabsTrigger>
           <TabsTrigger value="branding">Logo & Branding</TabsTrigger>
-          <TabsTrigger value="seo">SEO & Metadata</TabsTrigger>
           <TabsTrigger value="legal">Legal Pages</TabsTrigger>
         </TabsList>
 
@@ -323,43 +322,7 @@ export default function TitlePage() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="seo">
-              <Card>
-                <CardHeader>
-                  <CardTitle>SEO & Metadata</CardTitle>
-                  <CardDescription>
-                    Configure how your hospital appears in search results
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="siteDescription"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meta Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Describe your hospital for search engines..."
-                            className="min-h-24"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          This description appears in search engine results.
-                          Keep it under 160 characters for best results.
-                          <span className="block mt-1 text-right text-xs text-muted-foreground">
-                            {field.value?.length || 0}/500 characters
-                          </span>
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
+           
             <TabsContent value="legal">
               <Card>
                 <CardHeader>

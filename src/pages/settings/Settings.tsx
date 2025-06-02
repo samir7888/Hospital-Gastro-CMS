@@ -22,11 +22,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useAppMutation } from "@/utils/react-query";
-import { toast } from "sonner"; // or your toast library
+import { toast } from "sonner";
 import { imageSchema, type ImageResponse } from "@/schema/global.schema";
 import { FileUpload } from "@/components/file-upload";
-import { TiptapEditor } from "@/components/editor/tiptap-editor";
 import LegalPage from "./components/legalPage";
 
 const formSchema = z.object({
@@ -46,8 +46,6 @@ const formSchema = z.object({
     .string()
     .max(500, "Footer description must not exceed 500 characters")
     .optional(),
-  privacyPolicy: z.string().optional(),
-  termsAndConditions: z.string().optional(),
   logoId: imageSchema,
 });
 
@@ -75,15 +73,10 @@ export default function SettingsPage({
       siteTitle: "",
       siteDescription: "",
       footerDescription: "",
-      privacyPolicy: "",
-      termsAndConditions: "",
       logoId: "",
     },
   });
 
-  // Fetch existing settings from multiple endpoints
-
-  // Update form mutation
   const updateSettingsMutation = useAppMutation({
     url: "general-setting",
     type: "patch",
@@ -113,115 +106,162 @@ export default function SettingsPage({
         </p>
       </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>General Settings</CardTitle>
-              <CardDescription>
-                Basic information about your hospital website
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="companyName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Company Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Your Hospital Name" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      The official name of your hospital
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <Tabs defaultValue="general" className="space-y-6">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="general">General</TabsTrigger>
+              <TabsTrigger value="legal">Legal</TabsTrigger>
+            </TabsList>
 
-              <FormField
-                control={form.control}
-                name="siteTitle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Site Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Hospital Website Title" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      This appears in the browser tab and search results
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* General Settings Tab */}
+            <TabsContent value="general" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>General Settings</CardTitle>
+                  <CardDescription>
+                    Basic information about your hospital website
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="companyName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Your Hospital Name" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          The official name of your hospital
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="footerDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Footer Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Brief description for website footer..."
-                        className="min-h-20"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      This text appears in the website footer
-                      <span className="block mt-1 text-right text-xs text-muted-foreground">
-                        {field.value?.length || 0}/500 characters
-                      </span>
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Logo & Branding</CardTitle>
-              <CardDescription>
-                Upload your hospital logo and configure visual branding
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="logoId"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Hospital Logo</FormLabel>
-                    <FormControl>
-                      <FileUpload
-                        name="logoId"
-                        currentImage={uploadedImage}
-                        className="w-full"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Upload your hospital logo. Recommended size: 512x512px.
-                      Max file size: 5MB. Supported formats: JPG, PNG, SVG.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
-          <LegalPage />
+                  <FormField
+                    control={form.control}
+                    name="siteTitle"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Site Title</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Hospital Website Title"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          This appears in the browser tab and search results
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-          <div className="flex justify-end">
-            <Button type="submit" disabled={updateSettingsMutation.isPending}>
-              {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
-        </form>
-      </Form>
+                  <FormField
+                    control={form.control}
+                    name="siteDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Site Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Hospital Website Description"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          This appears in the browser tab and search results
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="footerDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Footer Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Brief description for website footer..."
+                            className="min-h-20"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          This text appears in the website footer
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/500 characters
+                          </span>
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Logo & Branding</CardTitle>
+                  <CardDescription>
+                    Upload your hospital logo and configure visual branding
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="logoId"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel>Hospital Logo</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            name="logoId"
+                            currentImage={uploadedImage}
+                            className="w-full"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Upload your hospital logo. Recommended size:
+                          512x512px. Max file size: 5MB. Supported formats: JPG,
+                          PNG, SVG.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+              <div className="flex justify-end mt-6">
+                <Button
+                  type="submit"
+                  disabled={updateSettingsMutation.isPending}
+                >
+                  {updateSettingsMutation.isPending
+                    ? "Saving..."
+                    : "Save Changes"}
+                </Button>
+              </div>
+            </TabsContent>
+          </form>
+        </Form>
+        {/* Legal Pages Tab */}
+        <TabsContent value="legal">
+          <LegalPage
+            defaultValues={{
+              privacyPolicy: defaultValues?.privacyPolicy || "",
+              termsAndConditions: defaultValues?.termsAndConditions || "",
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

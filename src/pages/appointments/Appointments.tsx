@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { Clock, User, Trash2, Eye, Filter, Phone, MapPin } from "lucide-react";
+import { Clock, User, Trash2, Eye, Phone, MapPin } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import type {
@@ -45,11 +45,7 @@ export default function AppointmentsPage() {
 function AppointmentsTable() {
   const [searchParam] = useSearchParams();
 
-  const {
-    data: appointments,
-    isLoading,
-    isError,
-  } = useAppQuery<AppointmentResponse>({
+  const { data: appointments, isLoading } = useAppQuery<AppointmentResponse>({
     queryKey: ["appointments", searchParam.toString()],
     url: `/appointments?${searchParam.toString()}`,
   });

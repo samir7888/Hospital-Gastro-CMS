@@ -17,7 +17,6 @@ import {
   MapPin,
   FileText,
   ArrowLeft,
-  Trash2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Appointment } from "@/schema/appointment-schema";
@@ -89,6 +88,7 @@ export default function AppointmentDetailsPage({
                   Cancel
                 </Button>
                 <Button
+                disabled={isDeleting}
                   variant="destructive"
                   onClick={() => {
                     handleDelete(appointment.id);

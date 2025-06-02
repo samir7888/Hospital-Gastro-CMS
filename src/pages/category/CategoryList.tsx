@@ -4,7 +4,7 @@ import type { Category, CategoryResponse } from '@/schema/news-type';
 import { useAppMutation, useAppQuery } from '@/utils/react-query';
 import { useQueryClient } from '@tanstack/react-query';
 import { Edit2, Save, Trash2, X } from 'lucide-react';
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 
 const CategoryList = () => {
@@ -144,6 +144,7 @@ const CategoryList = () => {
                         Cancel
                       </Button>
                       <Button
+                      disabled={isDeleting}
                         variant="destructive"
                         onClick={() => {
                           deleteCategory({ id: category.id });

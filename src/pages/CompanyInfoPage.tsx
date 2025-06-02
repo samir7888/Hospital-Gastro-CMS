@@ -100,12 +100,15 @@ const CompanyInfoForm = () => {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="max-w-7xl p-6 bg-white rounded-lg space-y-6"
-      ><div>
-        <h1 className="text-3xl font-bold tracking-tight">Company Info Management</h1>
-        <p className="text-muted-foreground">
-          Manage information about your company
-        </p>
-      </div>
+      >
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Company Info Management
+          </h1>
+          <p className="text-muted-foreground">
+            Manage information about your company
+          </p>
+        </div>
         <Card>
           <CardHeader>
             <CardTitle>Edit Company Information</CardTitle>
@@ -273,7 +276,11 @@ const CompanyInfoForm = () => {
                   className="px-3 py-2 border rounded-md"
                 >
                   {Object.values(ESocialNetwork).map((network) => (
-                    <option key={network} value={network}>
+                    <option
+                      className="capitalize"
+                      key={network}
+                      value={network}
+                    >
                       {network}
                     </option>
                   ))}

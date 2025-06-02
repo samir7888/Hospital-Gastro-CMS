@@ -28,7 +28,6 @@ export const CategorySelect = ({
   const [open, setOpen] = useState(false);
   const form = useFormContext();
 
-  console.log(form.getValues());
 
   const {
     data: categories,

@@ -332,39 +332,39 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 ))}
               </div>
 
+              {/* Image Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Hero Image</CardTitle>
+                  <CardDescription>
+                    Upload an image for your hero section
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="imageId"
+                    render={() => (
+                      <FormItem>
+                        <FormControl>
+                          <FileUpload
+                            currentImage={existingData?.heroSection.image}
+                            name="imageId"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
               <div className="flex justify-end">
                 <Button type="submit" disabled={isUpdating}>
                   {isUpdating ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
             </form>
-          </CardContent>
-        </Card>
-
-        {/* Image Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Hero Image</CardTitle>
-            <CardDescription>
-              Upload an image for your hero section
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <FormField
-              control={form.control}
-              name="imageId"
-              render={() => (
-                <FormItem>
-                  <FormControl>
-                    <FileUpload
-                      currentImage={existingData?.heroSection.image}
-                      name="imageId"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </CardContent>
         </Card>
       </div>

@@ -227,7 +227,6 @@ export default function NewsEventEditPage({
                       type="submit"
                       className="w-full cursor-pointer"
                       disabled={isPending}
-                      onClick={() => console.log("Submit button clicked")}
                     >
                       {isPending ? "Saving..." : "Save Blog"}
                     </Button>

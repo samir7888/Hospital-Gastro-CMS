@@ -7,17 +7,14 @@ import axios from "axios";
 import { BASEURL } from "@/utils/constant";
 
 interface AuthContextType {
-  user: AuthUser | null;
   accessToken: string | null;
   setAccessToken: React.Dispatch<React.SetStateAction<string | null>>;
   login: (email: string, password: string) => Promise<void>;
-  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -34,12 +31,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       );
       const { access_token } = response.data;
-      const decoded: { firstName: string; lastName: string; email: string } =
-        jwtDecode(access_token);
-
       setAccessToken(access_token);
-      const fullName = decoded.firstName + " " + decoded.lastName;
-      setUser({ name: fullName, email: decoded.email });
+
       navigate("/dashboard");
       toast.success("Logged in successfully");
     } catch (error: any) {
@@ -54,9 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, login, accessToken, setUser, setAccessToken }}
-    >
+    <AuthContext.Provider value={{ login, accessToken, setAccessToken }}>
       {children}
     </AuthContext.Provider>
   );
@@ -64,8 +55,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context;
+
+  const { accessToken } = context;
+
+  const decoded: { firstName: string; lastName: string; email: string } | null =
+    accessToken ? jwtDecode(accessToken) : null;
+
+  let user: AuthUser | null = null;
+
+  if (decoded) {
+    const fullName = decoded.firstName + " " + decoded.lastName;
+
+    user = {
+      name: fullName,
+      email: decoded.email,
+    };
+  }
+
+  return {
+    ...context,
+    user,
+  };
 }

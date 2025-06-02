@@ -25,6 +25,7 @@ import ResetPassword from "./pages/auth/reset-password";
 import UpdateEmailForm from "./pages/auth/change-email";
 import ForgetPasswordPage from "./pages/auth/forget-password";
 import MainSettingPage from "./pages/settings/MainSettingPage";
+import PersistentRefreshToken from "./components/PersistantRefreshToken";
 
 function App() {
   return (
@@ -39,9 +40,11 @@ function App() {
           {/* Protected Routes */}
           <Route
             element={
-              <AuthGuard>
-                <Applayout />
-              </AuthGuard>
+              <PersistentRefreshToken>
+                <AuthGuard>
+                  <Applayout />
+                </AuthGuard>
+              </PersistentRefreshToken>
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />

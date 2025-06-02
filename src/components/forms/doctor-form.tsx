@@ -224,7 +224,7 @@ export default function DoctorForm({
                 <FormField
                   control={form.control}
                   name="certifications"
-                  render={({ field }) => (
+                  render={({ field }) => ( 
                     <FormItem>
                       <FormLabel>Certifications</FormLabel>
                       <FormControl>

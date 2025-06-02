@@ -1,13 +1,12 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import AboutPage from "./components/about/AboutPage";
-import HeroSection from "./components/content-section";
 import { toast } from "sonner";
+import HeroSection from "./components/content-section";
+import MetaDataSection from "./components/MetaData/meta-data";
 
-// Page configuration for different routes
+// Page configuration
 const pageConfigs = {
   home: {
     apiEndpoint: "/home-page",
@@ -51,48 +50,21 @@ type PageType = keyof typeof pageConfigs;
 export default function HeroPage() {
   const [activeTab, setActiveTab] = useState<PageType>("home");
 
-  // Load the tab from URL hash on component mount and handle hash changes
   useEffect(() => {
     const getTabFromHash = () => {
-      const hash = window.location.hash.slice(1); // Remove the # symbol
-      return hash && pageConfigs[hash as PageType]
-        ? (hash as PageType)
-        : "home";
+      const hash = window.location.hash.slice(1);
+      return hash && pageConfigs[hash as PageType] ? (hash as PageType) : "home";
     };
-
-    // Set initial tab from hash
     setActiveTab(getTabFromHash());
-
-    // Listen for hash changes (back/forward navigation)
-    const handleHashChange = () => {
-      setActiveTab(getTabFromHash());
-    };
-
+    const handleHashChange = () => setActiveTab(getTabFromHash());
     window.addEventListener("hashchange", handleHashChange);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("hashchange", handleHashChange);
-    };
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  // Handle tab change
   const handleTabChange = (value: string) => {
     const newTab = value as PageType;
     setActiveTab(newTab);
-
-    // Update the URL hash
     window.location.hash = newTab;
-  };
-
-  const handleSuccess = (pageType: string) => {
-    console.log(`${pageType} hero section updated successfully!`);
-    toast.success(`${pageType} hero section updated successfully!`);
-  };
-
-  const handleError = (error: any, pageType: string) => {
-    console.error(`Failed to update ${pageType} hero section:`, error);
-    toast.error(`Failed to update ${pageType} hero section. Please try again.`);
   };
 
   const renderHeroSection = (pageType: PageType) => {
@@ -104,20 +76,16 @@ export default function HeroPage() {
         dataPath={config.dataPath}
         cardTitle={config.cardTitle}
         cardDescription={config.cardDescription}
-        onSuccess={() => handleSuccess(config.cardTitle)}
-        onError={(error) => handleError(error, config.cardTitle)}
+        onSuccess={() => toast.success(`${config.cardTitle} updated!`)}
+        onError={(error) => toast.error(error +`Failed to update ${config.cardTitle}`)}
       />
     );
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Page Management</h1>
-        <p className="text-muted-foreground">
-          Manage content for different sections of your website
-        </p>
-      </div>
+      <h1 className="text-3xl font-bold tracking-tight">Page Management</h1>
+      <p className="text-muted-foreground">Manage content for different sections of your website</p>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6">
         <TabsList className="mb-6">
@@ -128,65 +96,29 @@ export default function HeroPage() {
           <TabsTrigger value="news">Blogs</TabsTrigger>
         </TabsList>
 
-        {/* Home Page */}
-        <TabsContent value="home" className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold mb-2">Home Page</h2>
-            <p className="text-muted-foreground mb-6">
-              Manage your homepage hero section and appointment booking
-            </p>
-          </div>
+        {Object.keys(pageConfigs).map((page) => {
+          const pageType = page as PageType;
+          const config = pageConfigs[pageType];
+          return (
+            <TabsContent key={page} value={page} className="space-y-6">
+              <h2 className="text-2xl font-semibold">{config.cardTitle.replace("Hero Section", "")} Page</h2>
+              <p className="text-muted-foreground mb-4">{config.cardDescription}</p>
 
-          {renderHeroSection("home")}
-        </TabsContent>
+              {/* Nested Tabs for each section */}
+              <Tabs defaultValue="hero" className="mb-6">
+                <TabsList>
+                  <TabsTrigger value="hero">Hero Section</TabsTrigger>
+                  <TabsTrigger value="metadata">Meta Data</TabsTrigger>
+                </TabsList>
 
-        {/* About Page */}
-        <TabsContent value="about" className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold mb-2">About Page</h2>
-            <p className="text-muted-foreground mb-6">
-              Manage your about page hero section and content
-            </p>
-          </div>
-
-          {renderHeroSection("about")}
-        </TabsContent>
-
-        {/* Services Page */}
-        <TabsContent value="services" className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold mb-2">Services Page</h2>
-            <p className="text-muted-foreground mb-6">
-              Manage your services page hero section and service listings
-            </p>
-          </div>
-
-          {renderHeroSection("services")}
-        </TabsContent>
-
-        {/* Doctors Page */}
-        <TabsContent value="doctors" className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold mb-2">Doctors Page</h2>
-            <p className="text-muted-foreground mb-6">
-              Manage your doctors page hero section and doctor profiles
-            </p>
-          </div>
-
-          {renderHeroSection("doctors")}
-        </TabsContent>
-
-        {/* News and Events Page */}
-        <TabsContent value="news" className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold mb-2">Blogs Page</h2>
-            <p className="text-muted-foreground mb-6">
-              Manage your blogs page hero section and articles
-            </p>
-          </div>
-
-          {renderHeroSection("news")}
-        </TabsContent>
+                <TabsContent value="hero">{renderHeroSection(pageType)}</TabsContent>
+                <TabsContent value="metadata">
+                  <MetaDataSection apiEndpoint={config.apiEndpoint} queryKey={config.queryKey} />
+                </TabsContent>
+              </Tabs>
+            </TabsContent>
+          );
+        })}
       </Tabs>
     </div>
   );

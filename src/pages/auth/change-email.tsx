@@ -51,7 +51,6 @@ const UpdateEmailForm = () => {
     setSubmitStatus({ type: null, message: "" });
 
     try {
-      console.log("Updating email with data:", data);
 
       await axios.post(`/auth/update-email`, data);
 

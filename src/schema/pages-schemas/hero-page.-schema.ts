@@ -16,4 +16,9 @@ export type HomePageData = {
       url: string;
     };
   };
+  metadata: {
+    title: string;
+    description: string;
+    keywords: string[];
+  };
 };

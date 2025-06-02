@@ -16,6 +16,7 @@ import {
   CircleHelp,
   Group,
   Text,
+  CalendarCheck,
 } from "lucide-react";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -41,11 +42,7 @@ export function Sidebar({ open }: SidebarProps) {
       to: "/dashboard",
       icon: <Home className="h-5 w-5" />,
     },
-    // {
-    //   title: "Website Title",
-    //   to: "/title",
-    //   icon: <Text className="h-5 w-5" />,
-    // },
+    
     {
       title: "Pages",
       to: "/pages",
@@ -85,7 +82,7 @@ export function Sidebar({ open }: SidebarProps) {
     {
       title: "Booked appointments",
       to: "/appointments",
-      icon: <CircleHelp className="h-5 w-5" />,
+      icon: <CalendarCheck className="h-5 w-5" />,
     },
    
   ];

@@ -58,7 +58,6 @@ export default function ServicesPage() {
   // Reset form when existing service data is loaded
   useEffect(() => {
     if (existingService && !isLoadingService) {
-      console.log("Loading existing service data:", existingService); // Debug log
       form.reset({
         title: existingService.title,
         summary: existingService.summary,
@@ -174,7 +173,6 @@ export default function ServicesPage() {
                           key={`editor-${existingService?.id || "new"}-${field.value ? 'loaded' : 'empty'}`} // Better key for re-rendering
                           content={field.value || ""} // Ensure content is never undefined
                           onChange={(value) => {
-                            console.log("Editor onChange:", value); // Debug log
                             field.onChange(value);
                           }}
                           placeholder="Enter detailed description of your service..."

@@ -58,7 +58,6 @@ export default function TitlePage() {
       setIsLoading(false);
     }, 1000);
     
-    console.log(data);
   }
 
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {

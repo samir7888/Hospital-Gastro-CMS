@@ -41,11 +41,11 @@ export function Sidebar({ open }: SidebarProps) {
       to: "/dashboard",
       icon: <Home className="h-5 w-5" />,
     },
-    {
-      title: "Website Title",
-      to: "/title",
-      icon: <Text className="h-5 w-5" />,
-    },
+    // {
+    //   title: "Website Title",
+    //   to: "/title",
+    //   icon: <Text className="h-5 w-5" />,
+    // },
     {
       title: "Pages",
       to: "/pages",

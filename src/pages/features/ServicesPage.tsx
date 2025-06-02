@@ -20,11 +20,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Edit, Trash2, Plus, Eye } from "lucide-react";
+import { Edit, Trash2, Plus, Eye, FileText } from "lucide-react";
 import { type Services, type ServicesResponse } from "@/schema/services-schema";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import PaginationComponent from "@/components/pagination/pagination";
 import SearchInput from "@/components/helpers/search-input";
 
@@ -147,25 +147,7 @@ export default function ServicesListPage() {
       </div>
       <SearchInput />
       {services.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center p-8">
-            <div className="text-center space-y-4">
-              <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-                <Eye className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">No services yet</h3>
-                <p className="text-muted-foreground">
-                  Get started by creating your first service
-                </p>
-              </div>
-              <Button onClick={handleCreateNew}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Your First Service
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+       <NoServices />
       ) : (
         <>
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3  ">
@@ -291,3 +273,32 @@ function ServiceCard({
     </Card>
   );
 }
+function NoServices() {
+  const [searchParam] = useSearchParams();
+  const searchTerm = searchParam.get("search") || "";
+
+  return (
+    <Card className="border-dashed">
+      <CardContent className="flex flex-col items-center justify-center py-10">
+        <div className="rounded-full bg-muted p-3 mb-3">
+          <FileText className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <h3 className="text-lg font-semibold mb-1">No services found</h3>
+        <p className="text-muted-foreground text-center mb-4">
+          {searchTerm
+            ? "No items match your search criteria"
+            : "You haven't added any services yet"}
+        </p>
+        {!searchTerm && (
+          <Button asChild>
+            <Link to="/services/new">
+              <Plus className="h-4 w-4 mr-1" />
+              Add Your First Service
+            </Link>
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+

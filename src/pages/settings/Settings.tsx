@@ -293,8 +293,6 @@ export default function TitlePage() {
                     <FormControl>
                       <FileUpload
                         name="logoId"
-                        maxCount={1}
-                        maxSize={5242880} // 5MB
                         currentImage={generalSettings?.logo || null}
                         className="w-full"
                       />

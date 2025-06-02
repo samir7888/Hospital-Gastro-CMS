@@ -9,19 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState, useEffect } from "react";
-import {
-  Calendar,
-  Clock,
-  User,
-  Users,
-  Trash2,
-  Eye,
-  Search,
-  Filter,
-  Phone,
-  MapPin,
-} from "lucide-react";
+import { useState } from "react";
+import { Clock, User, Trash2, Eye, Filter, Phone, MapPin } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import type {
@@ -35,14 +24,6 @@ import PaginationComponent from "@/components/pagination/pagination";
 import SearchInput from "@/components/helpers/search-input";
 
 export default function AppointmentsPage() {
-  const [filter, setFilter] = useState({
-    doctor: "",
-    department: "",
-    status: "",
-    dateRange: { start: "", end: "" },
-  });
-  const [showFilters, setShowFilters] = useState(false);
-
   return (
     <div className="max-w-full">
       <div className="mb-6 flex flex-col">
@@ -50,103 +31,11 @@ export default function AppointmentsPage() {
         <p>View and manage Appointments information</p>
       </div>
 
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="mb-6 ">
         <div className="relative flex-1">
           <SearchInput />
         </div>
-
-        <button
-          className="flex items-center gap-2 px-4 py-2 border rounded"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          <Filter className="h-5 w-5" />
-          {showFilters ? "Hide Filters" : "Show Filters"}
-        </button>
       </div>
-
-      {/* {showFilters && (
-        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <select
-            className="p-2 border rounded"
-            value={filter.doctor}
-            onChange={(e) => setFilter({ ...filter, doctor: e.target.value })}
-          >
-            <option value="">All Doctors</option>
-            {appointments.map((doctor) => (
-              <option key={doctor} value={doctor}>
-                {doctor}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className="p-2 border rounded"
-            value={filter.department}
-            onChange={(e) =>
-              setFilter({ ...filter, department: e.target.value })
-            }
-          >
-            <option value="">All Departments</option>
-            {departments.map((dept) => (
-              <option key={dept} value={dept}>
-                {dept}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className="p-2 border rounded"
-            value={filter.status}
-            onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-          >
-            <option value="">All Statuses</option>
-            {statuses.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-
-          <div className="flex gap-2">
-            <input
-              type="date"
-              className="p-2 border rounded flex-1"
-              value={filter.dateRange.start}
-              onChange={(e) =>
-                setFilter({
-                  ...filter,
-                  dateRange: { ...filter.dateRange, start: e.target.value },
-                })
-              }
-            />
-            <input
-              type="date"
-              className="p-2 border rounded flex-1"
-              value={filter.dateRange.end}
-              onChange={(e) =>
-                setFilter({
-                  ...filter,
-                  dateRange: { ...filter.dateRange, end: e.target.value },
-                })
-              }
-            />
-          </div>
-
-          <button
-            className="p-2 bg-gray-200 rounded hover:bg-gray-300"
-            onClick={() =>
-              setFilter({
-                doctor: "",
-                department: "",
-                status: "",
-                dateRange: { start: "", end: "" },
-              })
-            }
-          >
-            Clear Filters
-          </button>
-        </div>
-      )} */}
 
       <AppointmentsTable />
     </div>
@@ -168,36 +57,18 @@ function AppointmentsTable() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  if (!appointments) {
-    return <div>No appointments found</div>;
+
+  if (!appointments || appointments.data.length === 0) {
+    return <NoAppointments />;
   }
-  // <NoDoctors />;
 
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white rounded-lg overflow-hidden">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Name
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              contact
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Date & Time
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Location
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
+        <thead className="bg-gray-100">{/* ... header rows ... */}</thead>
         <tbody className="divide-y divide-gray-200">
-          {appointments?.data.map((appointment) => (
-            <AppointmentList appointment={appointment} />
+          {appointments.data.map((appointment) => (
+            <AppointmentList key={appointment.id} appointment={appointment} />
           ))}
         </tbody>
       </table>
@@ -317,5 +188,21 @@ function AppointmentList({ appointment }: { appointment: Appointment }) {
         </div>
       </td>
     </tr>
+  );
+}
+
+function NoAppointments() {
+  return (
+    <div className="flex items-center justify-center py-10">
+      <div className="text-center">
+        <p className="text-lg font-medium text-gray-700">
+          No appointments found.
+        </p>
+        <p className="text-sm text-gray-500">
+          The appointments you are looking for may have been deleted or not
+          present.
+        </p>
+      </div>
+    </div>
   );
 }

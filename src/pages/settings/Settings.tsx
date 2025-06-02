@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -14,7 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Form,
   FormControl,
@@ -133,7 +132,7 @@ export default function TitlePage() {
   const updateSettingsMutation = useAppMutation({
     url: "general-setting",
     type: "patch",
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Settings updated successfully!");
     },
     onError: (error) => {
@@ -144,7 +143,12 @@ export default function TitlePage() {
 
   // Populate form with fetched data
   useEffect(() => {
-    if (generalSettings && privacyPolicy && termsConditions && footerDescription) {
+    if (
+      generalSettings &&
+      privacyPolicy &&
+      termsConditions &&
+      footerDescription
+    ) {
       form.reset({
         companyName: generalSettings.companyName || "",
         siteTitle: generalSettings.siteTitle || "",
@@ -190,163 +194,55 @@ export default function TitlePage() {
         </p>
       </div>
 
-      <Tabs defaultValue="general">
-        <TabsList className="mb-4">
-          <TabsTrigger value="general">General Settings</TabsTrigger>
-          <TabsTrigger value="branding">Logo & Branding</TabsTrigger>
-          <TabsTrigger value="legal">Legal Pages</TabsTrigger>
-        </TabsList>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <TabsContent value="general">
-              <Card>
-                <CardHeader>
-                  <CardTitle>General Settings</CardTitle>
-                  <CardDescription>
-                    Basic information about your hospital website
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {isLoadingSettings ? (
-                    <div className="space-y-4">
-                      <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                    </div>
-                  ) : (
-                    <>
-                      <FormField
-                        control={form.control}
-                        name="companyName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Company Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Your Hospital Name"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              The official name of your hospital
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="siteTitle"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Site Title</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Hospital Website Title"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              This appears in the browser tab and search results
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="footerDescription"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Footer Description</FormLabel>
-                            <FormControl>
-                              <Textarea
-                                placeholder="Brief description for website footer..."
-                                className="min-h-20"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              This text appears in the website footer
-                              <span className="block mt-1 text-right text-xs text-muted-foreground">
-                                {field.value?.length || 0}/500 characters
-                              </span>
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="branding">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Logo & Branding</CardTitle>
-                  <CardDescription>
-                    Upload your hospital logo and configure visual branding
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>General Settings</CardTitle>
+              <CardDescription>
+                Basic information about your hospital website
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {isLoadingSettings ? (
+                <div className="space-y-4">
+                  <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              ) : (
+                <>
                   <FormField
                     control={form.control}
-                    name="logoId"
+                    name="companyName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Hospital Logo</FormLabel>
+                        <FormLabel>Company Name</FormLabel>
                         <FormControl>
-                          <FileUpload
-                            name="logoId"
-                            maxCount={1}
-                            maxSize={5242880} // 5MB
-                            currentImage={generalSettings?.logo || null}
-                            className="w-full"
-                          />
+                          <Input placeholder="Your Hospital Name" {...field} />
                         </FormControl>
                         <FormDescription>
-                          Upload your hospital logo. Recommended size:
-                          512x512px. Max file size: 5MB. Supported formats: JPG,
-                          PNG, SVG.
+                          The official name of your hospital
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
-            </TabsContent>
 
-           
-            <TabsContent value="legal">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Legal Pages</CardTitle>
-                  <CardDescription>
-                    Configure your privacy policy and terms & conditions
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
                   <FormField
                     control={form.control}
-                    name="privacyPolicy"
+                    name="siteTitle"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Privacy Policy</FormLabel>
+                        <FormLabel>Site Title</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Enter your privacy policy content..."
-                            className="min-h-32"
+                          <Input
+                            placeholder="Hospital Website Title"
                             {...field}
                           />
                         </FormControl>
                         <FormDescription>
-                          Your hospital's privacy policy content
+                          This appears in the browser tab and search results
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -355,41 +251,126 @@ export default function TitlePage() {
 
                   <FormField
                     control={form.control}
-                    name="termsAndConditions"
+                    name="footerDescription"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Terms and Conditions</FormLabel>
+                        <FormLabel>Footer Description</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Enter your terms and conditions..."
-                            className="min-h-32"
+                            placeholder="Brief description for website footer..."
+                            className="min-h-20"
                             {...field}
                           />
                         </FormControl>
                         <FormDescription>
-                          Your hospital's terms and conditions content
+                          This text appears in the website footer
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/500 characters
+                          </span>
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </>
+              )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Logo & Branding</CardTitle>
+              <CardDescription>
+                Upload your hospital logo and configure visual branding
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="logoId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hospital Logo</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        name="logoId"
+                        maxCount={1}
+                        maxSize={5242880} // 5MB
+                        currentImage={generalSettings?.logo || null}
+                        className="w-full"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Upload your hospital logo. Recommended size: 512x512px.
+                      Max file size: 5MB. Supported formats: JPG, PNG, SVG.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Legal Pages</CardTitle>
+              <CardDescription>
+                Configure your privacy policy and terms & conditions
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="privacyPolicy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Privacy Policy</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter your privacy policy content..."
+                        className="min-h-32"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Your hospital's privacy policy content
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                disabled={updateSettingsMutation.isPending || isLoadingSettings}
-              >
-                {updateSettingsMutation.isPending
-                  ? "Saving..."
-                  : "Save Changes"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </Tabs>
+              <FormField
+                control={form.control}
+                name="termsAndConditions"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Terms and Conditions</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter your terms and conditions..."
+                        className="min-h-32"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Your hospital's terms and conditions content
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              disabled={updateSettingsMutation.isPending || isLoadingSettings}
+            >
+              {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }

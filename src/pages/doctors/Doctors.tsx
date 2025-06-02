@@ -59,12 +59,15 @@ function DoctorsGrid() {
     queryKey: ["doctors", searchParam.toString()],
     url: `/doctors?${searchParam.toString()}`,
   });
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
   if (isError) {
     <NoDoctors />;
+  }
+  if (doctors?.data.length === 0) {
+    return <NoDoctors />;
+    
   }
 
   return (

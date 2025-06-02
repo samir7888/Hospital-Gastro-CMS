@@ -15,7 +15,7 @@ export default function SearchInput({
   placeholder = "Search...",
 }: Props) {
   const [searchParam, setSearchParam] = useSearchParams();
-  const [search, setSearch] = useState(searchParam.get("search") || "");
+  const [search, setSearch] = useState(searchParam.get("search")?.trim() || "");
 
   const debouncedSearch = useDebounce(search, 300);
 
@@ -36,7 +36,7 @@ export default function SearchInput({
           placeholder={placeholder}
           className="pl-8"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value.trim())}
         />
       </div>
     </div>

@@ -83,6 +83,9 @@ function NewsGrid() {
   if (isError) {
     return <NoNews />;
   }
+  if (newsAndEvents?.data.length === 0) {
+    return <NoNews />;
+  }
 
   return (
     <div className="">

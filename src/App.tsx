@@ -14,7 +14,6 @@ import DashboardPage from "./pages/dashboard/Dashboard";
 import Applayout from "./components/layout/Applayout";
 import TitlePage from "./title/Title";
 import HeroPage from "./pages/pages/page";
-import Settings from "./pages/settings/Settings";
 import SingleDoctorPage from "./pages/doctors/SingleDoctorPage";
 import CategoryPage from "./pages/category/Category";
 import FAQPage from "./pages/faq/FAQSection";
@@ -25,6 +24,7 @@ import ChangePassword from "./pages/auth/change-password";
 import ResetPassword from "./pages/auth/reset-password";
 import UpdateEmailForm from "./pages/auth/change-email";
 import ForgetPasswordPage from "./pages/auth/forget-password";
+import MainSettingPage from "./pages/settings/MainSettingPage";
 
 function App() {
   return (
@@ -65,7 +65,7 @@ function App() {
             <Route path="/news/:id" element={<SingleNewsPage />} />
             <Route path="/news/new" element={<SingleNewsPage />} />
             <Route path="/title" element={<TitlePage />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings" element={<MainSettingPage />} />
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/change-email" element={<UpdateEmailForm />} />
           </Route>

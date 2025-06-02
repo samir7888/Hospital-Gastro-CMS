@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -23,11 +22,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useAppQuery, useAppMutation } from "@/utils/react-query";
+import { useAppMutation } from "@/utils/react-query";
 import { toast } from "sonner"; // or your toast library
-// import { FileUpload } from "@/components/ui/file-upload";
-import type { ImageResponse } from "@/schema/global.schema";
+import { imageSchema, type ImageResponse } from "@/schema/global.schema";
 import { FileUpload } from "@/components/file-upload";
+import { TiptapEditor } from "@/components/editor/tiptap-editor";
+import LegalPage from "./components/legalPage";
 
 const formSchema = z.object({
   companyName: z
@@ -48,35 +48,29 @@ const formSchema = z.object({
     .optional(),
   privacyPolicy: z.string().optional(),
   termsAndConditions: z.string().optional(),
-  logoId: z.string().optional(),
+  logoId: imageSchema,
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface GeneralSettingsResponse {
-  id: string;
-  companyName: string;
-  siteTitle: string;
-  siteDescription: string;
-  logo: ImageResponse | null;
-}
-
-interface PrivacyPolicyResponse {
-  privacyPolicy: string;
-}
-
-interface TermsConditionsResponse {
-  termsAndConditions: string;
-}
-
-interface FooterDescriptionResponse {
-  footerDescription: string;
-}
-
-export default function TitlePage() {
+export default function SettingsPage({
+  defaultValues,
+  uploadedImage,
+}: {
+  defaultValues?: {
+    companyName: string;
+    siteTitle: string;
+    siteDescription: string;
+    privacyPolicy: string;
+    termsAndConditions: string;
+    logoId: string | null;
+    footerDescription: string;
+  };
+  uploadedImage?: ImageResponse | null;
+}) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: defaultValues || {
       companyName: "",
       siteTitle: "",
       siteDescription: "",
@@ -88,45 +82,6 @@ export default function TitlePage() {
   });
 
   // Fetch existing settings from multiple endpoints
-  const {
-    data: generalSettings,
-    isLoading: isLoadingGeneral,
-    error: generalError,
-  } = useAppQuery<GeneralSettingsResponse>({
-    url: "general-setting",
-    queryKey: ["general-settings"],
-  });
-
-  const {
-    data: privacyPolicy,
-    isLoading: isLoadingPrivacy,
-    error: privacyError,
-  } = useAppQuery<PrivacyPolicyResponse>({
-    url: "general-setting/privacy-policy",
-    queryKey: ["privacy-policy"],
-  });
-
-  const {
-    data: termsConditions,
-    isLoading: isLoadingTerms,
-    error: termsError,
-  } = useAppQuery<TermsConditionsResponse>({
-    url: "general-setting/terms-and-condition",
-    queryKey: ["terms-conditions"],
-  });
-
-  const {
-    data: footerDescription,
-    isLoading: isLoadingFooter,
-    error: footerError,
-  } = useAppQuery<FooterDescriptionResponse>({
-    url: "general-setting/footer-description",
-    queryKey: ["footer-description"],
-  });
-
-  const isLoadingSettings =
-    isLoadingGeneral || isLoadingPrivacy || isLoadingTerms || isLoadingFooter;
-  const hasError = generalError || privacyError || termsError || footerError;
 
   // Update form mutation
   const updateSettingsMutation = useAppMutation({
@@ -141,46 +96,10 @@ export default function TitlePage() {
     },
   });
 
-  // Populate form with fetched data
-  useEffect(() => {
-    if (
-      generalSettings &&
-      privacyPolicy &&
-      termsConditions &&
-      footerDescription
-    ) {
-      form.reset({
-        companyName: generalSettings.companyName || "",
-        siteTitle: generalSettings.siteTitle || "",
-        siteDescription: generalSettings.siteDescription || "",
-        footerDescription: footerDescription.footerDescription || "",
-        privacyPolicy: privacyPolicy.privacyPolicy || "",
-        termsAndConditions: termsConditions?.termsAndConditions || "",
-        logoId: generalSettings.logo?.id || "",
-      });
-    }
-  }, [generalSettings, form]);
-
   function onSubmit(data: FormValues) {
     updateSettingsMutation.mutate({
       data,
     });
-  }
-
-  if (hasError) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600">
-            Error Loading Settings
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Failed to load general settings. Please refresh the page or try
-            again later.
-          </p>
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -204,76 +123,63 @@ export default function TitlePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {isLoadingSettings ? (
-                <div className="space-y-4">
-                  <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                </div>
-              ) : (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="companyName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Company Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Your Hospital Name" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          The official name of your hospital
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <FormField
+                control={form.control}
+                name="companyName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your Hospital Name" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      The official name of your hospital
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="siteTitle"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Site Title</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Hospital Website Title"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          This appears in the browser tab and search results
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <FormField
+                control={form.control}
+                name="siteTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Site Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Hospital Website Title" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      This appears in the browser tab and search results
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="footerDescription"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Footer Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Brief description for website footer..."
-                            className="min-h-20"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          This text appears in the website footer
-                          <span className="block mt-1 text-right text-xs text-muted-foreground">
-                            {field.value?.length || 0}/500 characters
-                          </span>
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              )}
+              <FormField
+                control={form.control}
+                name="footerDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Footer Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Brief description for website footer..."
+                        className="min-h-20"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      This text appears in the website footer
+                      <span className="block mt-1 text-right text-xs text-muted-foreground">
+                        {field.value?.length || 0}/500 characters
+                      </span>
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
           <Card>
@@ -287,13 +193,13 @@ export default function TitlePage() {
               <FormField
                 control={form.control}
                 name="logoId"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Hospital Logo</FormLabel>
                     <FormControl>
                       <FileUpload
                         name="logoId"
-                        currentImage={generalSettings?.logo || null}
+                        currentImage={uploadedImage}
                         className="w-full"
                       />
                     </FormControl>
@@ -307,63 +213,10 @@ export default function TitlePage() {
               />
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Legal Pages</CardTitle>
-              <CardDescription>
-                Configure your privacy policy and terms & conditions
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="privacyPolicy"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Privacy Policy</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter your privacy policy content..."
-                        className="min-h-32"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Your hospital's privacy policy content
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="termsAndConditions"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Terms and Conditions</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter your terms and conditions..."
-                        className="min-h-32"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Your hospital's terms and conditions content
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+          <LegalPage />
 
           <div className="flex justify-end">
-            <Button
-              type="submit"
-              disabled={updateSettingsMutation.isPending || isLoadingSettings}
-            >
+            <Button type="submit" disabled={updateSettingsMutation.isPending}>
               {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
           </div>

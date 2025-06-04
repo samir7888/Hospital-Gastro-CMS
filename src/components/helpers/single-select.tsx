@@ -10,7 +10,6 @@ import {
 } from "../ui/command";
 import { useAppQuery } from "@/utils/react-query";
 import { useFormContext } from "react-hook-form";
-import type { TOptions } from "@/schema/global.schema";
 import {
   FormControl,
   FormField,
@@ -18,6 +17,8 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
+import type { CategoryResponse } from "@/schema/news-type";
+import { ca } from "date-fns/locale";
 
 export const CategorySelect = ({
   fieldName = "categoryId",
@@ -34,22 +35,12 @@ export const CategorySelect = ({
     isPending,
     isLoading,
     error,
-  } = useAppQuery<TOptions>({
+  } = useAppQuery<CategoryResponse[]>({
     queryKey: ["blog-categories"],
-    url: `/blog-categories/options`,
+    url: `/blog-categories`,
   });
-
-  // 🔄 Set selected category name when ID is available and categories are loaded
-  // useEffect(() => {
-  //   if (categories && selectedId) {
-  //     const selectedCat = categories.find(
-  //       (cat) => cat.value === selectedId
-  //     );
-  //     if (selectedCat) {
-  //       setSelectedValue(selectedCat.label);
-  //     }
-  //   }
-  // }, [categories, selectedId]);
+console.log(categories)
+ 
 
   return (
     <FormField
@@ -71,10 +62,11 @@ export const CategorySelect = ({
                     aria-expanded={open}
                     className="w-full justify-between"
                   >
+
                     <span className="truncate">
                       {field.value && !isLoading
-                        ? categories?.find((cat) => cat.value === field.value)
-                            ?.label || "Unknown Category"
+                        ? categories?.find((cat) => cat.id === field.value)
+                            ?.name || "Unknown Category"
                         : "Select a category"}
                     </span>
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -87,21 +79,21 @@ export const CategorySelect = ({
                       <div className="max-h-64 overflow-y-auto">
                         {(categories ?? [])?.map((category) => (
                           <CommandItem
-                            key={category.value}
+                            key={category.name}
                             onSelect={() => {
-                              field.onChange(category.value);
+                              field.onChange(category.id);
                               setOpen(false);
                             }}
                           >
                             <Check
                               className={`mr-2 h-4 w-4 ${
-                                field.value === category.value
+                                field.value === category.name
                                   ? "opacity-100"
                                   : "opacity-0"
                               }`}
                             />
                             <div className="flex flex-col">
-                              <span>{category.label}</span>
+                              <span>{category.name}</span>
                             </div>
                           </CommandItem>
                         ))}

@@ -223,7 +223,7 @@ function NoNews() {
         </p>
         {!searchTerm && (
           <Button asChild>
-            <Link to="/blogs/new">
+            <Link to="/news/new">
               <Plus className="h-4 w-4 mr-1" />
               Add Your First Item
             </Link>

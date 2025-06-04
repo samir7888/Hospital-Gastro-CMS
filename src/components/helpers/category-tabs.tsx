@@ -68,7 +68,7 @@ const CategoryTabs = () => {
           <TabsTrigger 
             key={categoryItem.id} 
             value={categoryItem.name}
-            className="text-sm truncate capitalize"
+            className="text-sm  capitalize"
             title={categoryItem.name} // Show full name on hover
           >
             {categoryItem.name}

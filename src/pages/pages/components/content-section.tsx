@@ -145,7 +145,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
     onSuccess: () => {
       toast.success("Hero section updated successfully!");
-      refetch();
     },
     // You might want to show a toast here
 
@@ -358,6 +357,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                   />
                 </CardContent>
               </Card>
+
+
+
 
               <div className="flex justify-end">
                 <Button type="submit" disabled={isUpdating}>

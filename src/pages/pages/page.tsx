@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import HeroSection from "./components/content-section";
 import MetaDataSection from "./components/MetaData/meta-data";
+import AboutPage from "./components/about/AboutPage";
 
 // Page configuration
 const pageConfigs = {
@@ -20,7 +21,7 @@ const pageConfigs = {
     queryKey: ["about-page"],
     dataPath: "heroSection",
     cardTitle: "About Hero Section",
-    cardDescription: "Update the hero content for your about page",
+    cardDescription: "Update the about section of your website",
   },
   services: {
     apiEndpoint: "/services-page",
@@ -53,7 +54,9 @@ export default function HeroPage() {
   useEffect(() => {
     const getTabFromHash = () => {
       const hash = window.location.hash.slice(1);
-      return hash && pageConfigs[hash as PageType] ? (hash as PageType) : "home";
+      return hash && pageConfigs[hash as PageType]
+        ? (hash as PageType)
+        : "home";
     };
     setActiveTab(getTabFromHash());
     const handleHashChange = () => setActiveTab(getTabFromHash());
@@ -77,7 +80,9 @@ export default function HeroPage() {
         cardTitle={config.cardTitle}
         cardDescription={config.cardDescription}
         onSuccess={() => toast.success(`${config.cardTitle} updated!`)}
-        onError={(error) => toast.error(error +`Failed to update ${config.cardTitle}`)}
+        onError={(error) =>
+          toast.error(error + `Failed to update ${config.cardTitle}`)
+        }
       />
     );
   };
@@ -85,7 +90,9 @@ export default function HeroPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold tracking-tight">Page Management</h1>
-      <p className="text-muted-foreground">Manage content for different sections of your website</p>
+      <p className="text-muted-foreground">
+        Manage content for different sections of your website
+      </p>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6">
         <TabsList className="mb-6">
@@ -101,19 +108,37 @@ export default function HeroPage() {
           const config = pageConfigs[pageType];
           return (
             <TabsContent key={page} value={page} className="space-y-6">
-              <h2 className="text-2xl font-semibold">{config.cardTitle.replace("Hero Section", "")} Page</h2>
-              <p className="text-muted-foreground mb-4">{config.cardDescription}</p>
+              <h2 className="text-2xl font-semibold">
+                {config.cardTitle.replace("Hero Section", "")} Page
+              </h2>
+              <p className="text-muted-foreground mb-4">
+                {config.cardDescription}
+              </p>
 
               {/* Nested Tabs for each section */}
-              <Tabs defaultValue="hero" className="mb-6">
-                <TabsList>
-                  <TabsTrigger value="hero">Hero Section</TabsTrigger>
-                  <TabsTrigger value="metadata">Meta Data</TabsTrigger>
+              <Tabs defaultValue="hero" className="mb-6 !min-w-full">
+                <TabsList className="!min-w-full">
+                  {pageType !== "about" ? (
+                    <TabsTrigger value="hero">Hero Section</TabsTrigger>
+                  ) : (
+                    <TabsTrigger value="hero">Content</TabsTrigger>
+                  )}
+                  <TabsTrigger value="metadata">Metadata</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="hero">{renderHeroSection(pageType)}</TabsContent>
+                <TabsContent value="hero">
+                  {pageType !== "about" ? (
+                    renderHeroSection(pageType)
+                  ) : (
+                    <AboutPage />
+                  )}
+                </TabsContent>
+
                 <TabsContent value="metadata">
-                  <MetaDataSection apiEndpoint={config.apiEndpoint} queryKey={config.queryKey} />
+                  <MetaDataSection
+                    apiEndpoint={config.apiEndpoint}
+                    queryKey={config.queryKey}
+                  />
                 </TabsContent>
               </Tabs>
             </TabsContent>

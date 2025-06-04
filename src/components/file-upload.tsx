@@ -33,6 +33,7 @@ export function FileUpload({
   const onDrop = useCallback(
     async (acceptedFiles: File[], rejectedFiles: any[]) => {
       const formData = new FormData();
+
       for (const file of acceptedFiles) {
         formData.append("images", file);
       }
@@ -63,7 +64,6 @@ export function FileUpload({
           }
         }
       } catch (error) {
-        
         form.setError(name, {
           message: "File upload failed. Please try again.",
         });

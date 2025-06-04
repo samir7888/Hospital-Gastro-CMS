@@ -4,13 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import MissionVisionSection from "./mission-section";
@@ -19,6 +13,7 @@ import CoreValuesSection from "./core-value-section";
 import StatsSection from "./stats-section";
 import type { AboutPageData } from "@/schema/pages-schemas/about-page-schema";
 import { useAppQuery, useAppMutation } from "@/utils/react-query";
+import HeroSection from "../content-section";
 
 // Updated Schemas matching the new structure
 const missionVisionSchema = z.object({
@@ -285,25 +280,29 @@ export default function AboutPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Page Section</h1>
-        <p className="text-muted-foreground">
-          Update the about section of your website
-        </p>
-      </div>
+    <div className="space-y-6 ">
+      
 
       <Tabs defaultValue="about" className="mb-6">
         <TabsContent value="about">
           <Tabs value={activeSubTab} onValueChange={setActiveSubTab}>
             <TabsList className="mb-6">
+              <TabsTrigger value="hero-section">Hero Section</TabsTrigger>
               <TabsTrigger value="mission-vision">Mission & Vision</TabsTrigger>
               <TabsTrigger value="stats">Stats</TabsTrigger>
               <TabsTrigger value="journey">Our Journey</TabsTrigger>
               <TabsTrigger value="core-values">Core Values</TabsTrigger>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
             </TabsList>
 
+            <TabsContent value="hero-section">
+             <HeroSection
+             apiEndpoint="/about-page"
+             queryKey={["about-page"]}
+             dataPath="heroSection"
+             cardTitle="Hero Section"
+             cardDescription="Update the content for your hero section"
+             />
+            </TabsContent>
             <TabsContent value="mission-vision">
               <MissionVisionSection
                 form={missionVisionForm}
@@ -336,136 +335,7 @@ export default function AboutPage() {
               />
             </TabsContent>
 
-            <TabsContent value="preview">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Preview</CardTitle>
-                  <CardDescription>
-                    Preview how your about section will look on the website
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="rounded-lg overflow-hidden border bg-card text-card-foreground shadow p-6">
-                    {/* Stats Preview - Updated for new array structure */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 text-center gap-4 mb-12">
-                      {statsForm.getValues().statistics?.map((stat, index) => (
-                        <div key={index}>
-                          <div className="flex justify-center mb-2">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="text-blue-500"
-                            >
-                              <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />
-                              <circle cx="12" cy="8" r="7" />
-                            </svg>
-                          </div>
-                          <p className="text-xl font-bold">{stat.count}+</p>
-                          <p className="text-sm text-gray-600">{stat.title}</p>
-                        </div>
-                      ))}
-                      {(!statsForm.getValues().statistics ||
-                        statsForm.getValues().statistics?.length === 0) && (
-                        <p className="text-gray-500 italic col-span-full text-center">
-                          No statistics added yet.
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Mission & Vision Preview */}
-                    <div className="grid md:grid-cols-2 gap-8 mb-12">
-                      <div>
-                        <h2 className="text-xl font-bold mb-4">Our Mission</h2>
-                        <div
-                          className="text-gray-700 prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{
-                            __html:
-                              missionVisionForm.getValues().mission ||
-                              "No mission statement added yet.",
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <h2 className="text-xl font-bold mb-4">Our Vision</h2>
-                        <div
-                          className="text-gray-700 prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{
-                            __html:
-                              missionVisionForm.getValues().vision ||
-                              "No vision statement added yet.",
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Journey Preview - Updated without year display */}
-                    <div className="mb-12">
-                      <h2 className="text-2xl font-bold mb-6 text-center">
-                        Our Journey
-                      </h2>
-                      <div className="relative border-l-2 border-blue-500 ml-4 pl-8 space-y-8">
-                        {journeyForm
-                          .getValues()
-                          .journey?.map((milestone, index) => (
-                            <div key={index}>
-                              <span className="absolute -left-3 flex items-center justify-center w-6 h-6 bg-blue-500 rounded-full text-white text-xs">
-                                {index + 1}
-                              </span>
-                              <h3 className="text-lg font-bold">
-                                {milestone.title}
-                              </h3>
-                              <p className="text-gray-700">
-                                {milestone.description}
-                              </p>
-                            </div>
-                          ))}
-                        {(!journeyForm.getValues().journey ||
-                          journeyForm.getValues().journey?.length === 0) && (
-                          <p className="text-gray-500 italic">
-                            No journey milestones added yet.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Core Values Preview */}
-                    <div>
-                      <h2 className="text-2xl font-bold mb-6 text-center">
-                        Our Core Values
-                      </h2>
-                      <div className="grid md:grid-cols-3 gap-6">
-                        {coreValuesForm
-                          .getValues()
-                          .coreValues?.map((value, index) => (
-                            <div key={index} className="p-4 border rounded-lg">
-                              <h3 className="text-lg font-bold mb-2">
-                                {value.title}
-                              </h3>
-                              <p className="text-gray-700">
-                                {value.description}
-                              </p>
-                            </div>
-                          ))}
-                        {(!coreValuesForm.getValues().coreValues ||
-                          coreValuesForm.getValues().coreValues?.length ===
-                            0) && (
-                          <p className="text-gray-500 italic col-span-3 text-center">
-                            No core values added yet.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+            
           </Tabs>
         </TabsContent>
       </Tabs>

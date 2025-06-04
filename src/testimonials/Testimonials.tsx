@@ -63,7 +63,11 @@ function TestimonialsGrid() {
     return <div>Loading...</div>;
   }
   if (isError) {
-    <NoTestimonials />;
+    return <NoTestimonials />;
+  }
+ 
+  if ( testimonials?.length === 0) {
+    return <NoTestimonials />;
   }
   return (
     <div className="">
@@ -107,10 +111,9 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
         <div className="flex items-start gap-4">
           <Avatar className="h-12 w-12 border-2 border-white shadow-md">
             <AvatarImage
-              src={testimonial.personImage?.url}
               alt={testimonial.personName}
             />
-            <AvatarFallback>{testimonial.personName.charAt(0)}</AvatarFallback>
+            <AvatarFallback>{testimonial.personName.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <h3 className="font-medium text-lg">{testimonial.personName}</h3>

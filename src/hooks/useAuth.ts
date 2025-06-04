@@ -1,5 +1,3 @@
-
-
 import axios from "axios";
 import { BASEURL } from "../utils/constant";
 import { useAuth } from "@/context/auth-context";
@@ -9,17 +7,21 @@ const useAxiosAuth = () => {
   const axiosInstance = axios.create({
     baseURL: BASEURL,
     withCredentials: true, // Important for refresh token in HTTP-only cookie
+    timeout: 10000,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
   });
 
-  axiosInstance.interceptors.request.use(
-    (config) => {
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
+  // axiosInstance.interceptors.request.use(
+  //   (config) => {
+  //     if (accessToken) {
+  //       config.headers.Authorization = `Bearer ${accessToken}`;
+  //     }
+  //     return config;
+  //   },
+  //   (error) => Promise.reject(error)
+  // );
 
   axiosInstance.interceptors.response.use(
     (response) => response,

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import { Eye, EyeOff, Lock, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/context/auth-context";
 import {
   Form,
   FormControl,
@@ -44,7 +43,6 @@ interface ResetPasswordRequest {
 const ResetPassword: React.FC = () => {
   const axios = useAxiosAuth();
   const { token: urlToken } = useParams<{ token: string }>(); // ✅ Call at top-level
-  const { accessToken } = useAuth(); // ✅ Call at top-level
   const navigate = useNavigate();
 
   const [showPasswords, setShowPasswords] = useState({

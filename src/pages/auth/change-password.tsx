@@ -50,7 +50,7 @@ const ChangePassword: React.FC = () => {
 
   const navigate = useNavigate();
   const axios = useAxiosAuth();
-  const { setAccessToken, setUser } = useAuth();
+  const { setAccessToken } = useAuth();
 
   const form = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
@@ -64,7 +64,6 @@ const ChangePassword: React.FC = () => {
 
   const logout = async () => {
     await axios.post(`/auth/logout`);
-    setUser(null);
     setAccessToken(null);
   };
 

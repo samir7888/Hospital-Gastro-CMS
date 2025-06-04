@@ -2,7 +2,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppQuery, useAppMutation } from "@/utils/react-query";
 import { toast } from "sonner";
-import type { FaqItem, FaqResponse, FaqSchemaValues } from "@/schema/faqs";
+import type { FaqResponse } from "@/schema/faqs";
 import { useSearchParams } from "react-router-dom";
 
 export const useFAQs = () => {

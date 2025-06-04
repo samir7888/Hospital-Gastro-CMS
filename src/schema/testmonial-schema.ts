@@ -10,7 +10,11 @@ export interface ITestimonial {
   personName: string;
   personCompany: string;
   personRating: number;
-  personMessage: string;    
+  personMessage: string;
+  personImage: {
+    id:string;
+    url: string;
+  } | null;
 }
 
 export type TestimonialResponse = ITestimonial[];

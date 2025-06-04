@@ -21,11 +21,10 @@ interface HeaderProps {
 
 export function Header({ toggleSidebar }: HeaderProps) {
   // const { setTheme } = useTheme();
-  const { setAccessToken, setUser } = useAuth();
+  const { setAccessToken } = useAuth();
   const axios = useAxiosAuth();
   const logout = async () => {
     await axios.post(`/auth/logout`);
-    setUser(null);
     setAccessToken(null);
   };
   return (

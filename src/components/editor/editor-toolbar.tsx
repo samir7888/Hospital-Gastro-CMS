@@ -1,6 +1,5 @@
 "use client";
 
-import ImageResize from 'tiptap-extension-resize-image';
 import { useCallback } from "react";
 import { Editor } from "@tiptap/react";
 import {
@@ -12,7 +11,6 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  Link as LinkIcon,
   Image as ImageIcon,
 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
@@ -24,36 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button, buttonVariants } from "../ui/button";
+import {  buttonVariants } from "../ui/button";
 
 interface EditorToolbarProps {
   editor: Editor | null;
 }
 
 export function EditorToolbar({ editor }: EditorToolbarProps) {
-  const setLink = useCallback(() => {
-    const previousUrl = editor?.getAttributes("link").to;
-    const url = window.prompt("URL", previousUrl);
-
-    // cancelled
-    if (url === null) {
-      return;
-    }
-
-    // empty
-    if (url === "") {
-      editor?.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
-    }
-
-    // update link
-    editor
-      ?.chain()
-      .focus()
-      .extendMarkRange("link")
-      .setLink({ href: url })
-      .run();
-  }, [editor]);
+ 
 
   const handleImageUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

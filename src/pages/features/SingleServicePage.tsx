@@ -27,7 +27,6 @@ import { FileUpload } from "@/components/file-upload";
 import {
   serviceFormDefaultValues,
   serviceSchema,
-  type Services,
   type ServiceSchemaType,
   type SingleServices,
 } from "@/schema/services-schema";

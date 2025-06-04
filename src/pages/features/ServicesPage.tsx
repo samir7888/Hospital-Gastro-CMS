@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Edit, Trash2, Plus, Eye, FileText } from "lucide-react";
+import { Edit, Trash2, Plus, FileText } from "lucide-react";
 import { type Services, type ServicesResponse } from "@/schema/services-schema";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import { useQueryClient } from "@tanstack/react-query";

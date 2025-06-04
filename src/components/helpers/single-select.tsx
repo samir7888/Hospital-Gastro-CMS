@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import  { useState } from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import {
@@ -18,11 +18,8 @@ import {
   FormMessage,
 } from "../ui/form";
 import type { CategoryResponse } from "@/schema/news-type";
-import { ca } from "date-fns/locale";
 
 export const CategorySelect = ({
-  fieldName = "categoryId",
-  placeholder = "Select category...",
   searchPlaceholder = "Search categories...",
   className = "",
 }) => {

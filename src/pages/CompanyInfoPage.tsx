@@ -36,6 +36,11 @@ const CompanyInfoForm = () => {
     url: "company-info",
     type: "patch",
     onSuccess: () => toast.success("Company information updated successfully!"),
+    
+    onError: (error: any) => {
+      console.log(error)
+      toast.error(error?.message.message || "Failed to update company information");
+    },
   });
 
   const form = useForm<ContactType>({

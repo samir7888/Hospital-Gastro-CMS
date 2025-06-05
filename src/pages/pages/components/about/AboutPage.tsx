@@ -96,7 +96,7 @@ type JourneyValues = z.infer<typeof journeySchema>;
 type CoreValuesValues = z.infer<typeof coreValuesSchema>;
 
 export default function AboutPage() {
-  const [activeSubTab, setActiveSubTab] = useState("mission-vision");
+  const [activeSubTab, setActiveSubTab] = useState("hero-section");
 
   // Fetch existing data
   const {
@@ -285,7 +285,7 @@ export default function AboutPage() {
 
       <Tabs defaultValue="about" className="mb-6">
         <TabsContent value="about">
-          <Tabs value={activeSubTab} onValueChange={setActiveSubTab}>
+          <Tabs value={activeSubTab} defaultValue="hero-section" onValueChange={setActiveSubTab}>
             <TabsList className="mb-6">
               <TabsTrigger value="hero-section">Hero Section</TabsTrigger>
               <TabsTrigger value="mission-vision">Mission & Vision</TabsTrigger>

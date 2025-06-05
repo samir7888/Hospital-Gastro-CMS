@@ -8,7 +8,7 @@ export const companyInfoSchema = z.object({
   city: z.string().min(1, "City is required"),
   address: z.string().min(1, "Address is required"),
   phone: z.array(
-    z 
+    z
       .string({
         required_error: "Phone number is required",
         invalid_type_error: "Phone must be a string",
@@ -17,7 +17,12 @@ export const companyInfoSchema = z.object({
         message: "Phone must be a valid E.164 phone number",
       })
   ),
-  emergencyPhone: z.string().min(1, "Emergency phone is required"),
+  emergencyPhone: z
+    .string()
+    .min(1, "Emergency phone is required")
+    .regex(PHONE_NUMBER_REGEX, {
+      message: "Phone must be a valid E.164 phone number",
+    }),
   workingHours: z.string().min(1, "Working hours are required"),
   mapLink: z.string().url("Invalid map link").min(1, "Map link is required"),
   email: z.array(

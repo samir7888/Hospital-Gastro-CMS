@@ -291,7 +291,7 @@ function NoServices() {
         </p>
         {!searchTerm && (
           <Button asChild>
-            <Link to="/services/new">
+            <Link to="/services/create">
               <Plus className="h-4 w-4 mr-1" />
               Add Your First Service
             </Link>

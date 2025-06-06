@@ -1,5 +1,6 @@
 
 import { z } from "zod";
+import { imageSchema, type ImageResponse } from "./global.schema";
 
 
 
@@ -10,11 +11,8 @@ export interface ITestimonial {
   personName: string;
   personCompany: string;
   personRating: number;
-  personMessage: string;
-  personImage: {
-    id:string;
-    url: string;
-  } | null;
+  personMessage: string;    
+ personImage: ImageResponse | null;
 }
 
 export type TestimonialResponse = ITestimonial[];
@@ -58,6 +56,7 @@ export const CreateTestimonialSchema = z.object({
     .min(10, { message: 'Message must be between 10 and 1000 characters' })
     .max(1000, { message: 'Message must be between 10 and 1000 characters' }),
 
+  personImageId: imageSchema,
 });
 
 export type CreateTestimonialType = z.infer<typeof CreateTestimonialSchema>;
@@ -67,4 +66,5 @@ export const testimonialFormDefaultValues: Partial<CreateTestimonialType> = {
   personCompany: '',
   personRating: undefined,
   personMessage: '',
+  personImageId: null,
 };

@@ -111,6 +111,7 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
         <div className="flex items-start gap-4">
           <Avatar className="h-12 w-12 border-2 border-white shadow-md">
             <AvatarImage
+             src={testimonial?.personImage?.url}
               alt={testimonial.personName}
             />
             <AvatarFallback>{testimonial.personName.charAt(0).toUpperCase()}</AvatarFallback>

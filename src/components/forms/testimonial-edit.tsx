@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+import { FileUpload } from "@/components/file-upload";
 import {
   Form,
   FormControl,
@@ -34,6 +35,7 @@ import { useAppMutation } from "@/utils/react-query";
 
 export default function TestimonialForm({
   defaultValues,
+  uploadedImage,
 }: {
   defaultValues?: CreateTestimonialType;
   uploadedImage?: ImageResponse | null;
@@ -67,6 +69,22 @@ export default function TestimonialForm({
         <div className="lg:col-span-2">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="lg:col-span-1">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Photo</CardTitle>
+                    <CardDescription>
+                      Upload a photo for the testimonial
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <FileUpload
+                      currentImage={uploadedImage}
+                      name="personImageId"
+                    />
+                  </CardContent>
+                </Card>
+              </div>
               <Card>
                 <CardHeader>
                   <CardTitle>Testimonial Information</CardTitle>
@@ -108,14 +126,7 @@ export default function TestimonialForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Rating</FormLabel>
-                          <Input
-                            placeholder="Enter rating"
-                            type="number"
-                            {...field}
-                            min={1}
-                            max={5}
-                            step={0.5}
-                          />
+                          <Input placeholder="Enter rating" type="number" {...field} min={1} max={5} step={0.5} />
                           <FormMessage />
                         </FormItem>
                       )}

@@ -26,14 +26,14 @@ const TestimonialsPage = () => {
       <TestimonialForm
         defaultValues={
           data
-          // ? {
-          //     ...data,
-          //     personImageId:
-          //       typeof data.personImage === "object" && data.personImage !== null
-          //         ? data.personImage.id // or .url or whatever string property you need
-          //         : data.personImage,
-          //   }
-          // : undefined
+          ? {
+              ...data,
+              personImageId:
+                typeof data.personImage === "object" && data.personImage !== null
+                  ? data.personImage.id // or .url or whatever string property you need
+                  : data.personImage,
+            }
+          : undefined
         }
         uploadedImage={data?.personImage}
       />

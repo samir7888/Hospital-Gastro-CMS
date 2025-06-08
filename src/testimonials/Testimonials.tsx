@@ -23,7 +23,36 @@ import type {
 } from "@/schema/testmonial-schema";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 
-
+// Star Rating Component with half star support
+function StarRating({ rating, maxStars = 5 }: { rating: number; maxStars?: number }) {
+  const stars = [];
+  
+  for (let i = 1; i <= maxStars; i++) {
+    const filled = rating >= i;
+    const halfFilled = rating >= i - 0.5 && rating < i;
+    
+    stars.push(
+      <div key={i} className="relative inline-block">
+        {/* Background star (empty) */}
+        <Star className="h-4 w-4 text-gray-300" />
+        
+        {/* Filled star overlay */}
+        {filled && (
+          <Star className="absolute top-0 left-0 h-4 w-4 text-yellow-400 fill-yellow-400" />
+        )}
+        
+        {/* Half-filled star overlay */}
+        {halfFilled && (
+          <div className="absolute top-0 left-0 overflow-hidden" style={{ width: '50%' }}>
+            <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+          </div>
+        )}
+      </div>
+    );
+  }
+  
+  return <div className="flex">{stars}</div>;
+}
 
 export default function TestimonialsPage() {
   return (
@@ -47,6 +76,7 @@ export default function TestimonialsPage() {
     </div>
   );
 }
+
 function TestimonialsGrid() {
   const [searchParam] = useState("");
   const {
@@ -65,7 +95,7 @@ function TestimonialsGrid() {
     return <NoTestimonials />;
   }
  
-  if ( testimonials?.length === 0) {
+  if (testimonials?.length === 0) {
     return <NoTestimonials />;
   }
   return (
@@ -82,12 +112,11 @@ function TestimonialsGrid() {
 }
 
 function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
-
   const { mutateAsync: deleteTestimonial, isPending: isDeleting } =
     useAppMutation({
       type: "delete",
       url: `/testimonials/${testimonial.id}`,
-     queryKey: ["testimonials"],
+      queryKey: ["testimonials"],
     });
 
   const handleDeleteConfirm = () => {
@@ -103,7 +132,7 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
         <div className="flex items-start gap-4">
           <Avatar className="h-12 w-12 border-2 border-white shadow-md">
             <AvatarImage
-             src={testimonial?.personImage?.url}
+              src={testimonial?.personImage?.url}
               alt={testimonial.personName}
             />
             <AvatarFallback>{testimonial.personName.charAt(0).toUpperCase()}</AvatarFallback>
@@ -111,18 +140,8 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
           <div className="flex-1">
             <h3 className="font-medium text-lg">{testimonial.personName}</h3>
             <div className="flex items-center gap-2 mt-1 mb-4">
-              <div className="flex">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${
-                      i < testimonial.personRating
-                        ? "text-yellow-400 fill-yellow-400"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
+              {/* Updated to use the new StarRating component */}
+              <StarRating rating={testimonial.personRating} />
               <span className="text-sm text-muted-foreground">
                 {testimonial.personCompany}
               </span>

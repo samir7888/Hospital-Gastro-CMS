@@ -37,13 +37,15 @@ const heroSectionSchema = z.object({
   title: z.string().min(1, "Title is required"),
   subtitle: z.string().min(1, "Subtitle is required"),
   imageId: imageSchema,
-  cta: z.array(
-    z.object({
-      link: z.string().min(1, "Link is required"),
-      text: z.string().min(1, "Text is required"),
-      variant: z.enum(["primary", "secondary", "outline"]),
-    })
-  ),
+  cta: z
+    .array(
+      z.object({
+        link: z.string().min(1, "Link is required"),
+        text: z.string().min(1, "Text is required"),
+        variant: z.enum(["primary", "secondary", "outline"]),
+      })
+    )
+    .max(2, { message: "At most 2 CTAs are allowed" }),
 });
 
 type HeroSectionType = z.infer<typeof heroSectionSchema>;
@@ -231,6 +233,7 @@ function HeroForm({
                     Call-to-Action Buttons
                   </h3>
                   <Button
+                    disabled={fields.length >= 2}
                     type="button"
                     variant="outline"
                     size="sm"

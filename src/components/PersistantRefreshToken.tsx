@@ -34,8 +34,9 @@ const PersistentRefreshToken = ({
   }, []);
 
   if (loading) {
-    return <div>
-        <Skeleton className="w-32 h-12" />
+    return <div className="flex flex-col container mx-auto gap-12 items-center justify-center h-screen">
+      <Skeleton className="w-52 h-12" />
+      <Skeleton className="w-full h-32" />
     </div>;
   }
 

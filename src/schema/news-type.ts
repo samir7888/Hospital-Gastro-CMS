@@ -73,15 +73,15 @@ export const CreateBlogSchema = z.object({
 
   featuredImageId: z
     .string({
-      required_error: "Featured image ID is required",
-      invalid_type_error: "Featured image ID must be a UUID string",
+      required_error: "Featured image must be provided",
+      invalid_type_error: "Featured image must be provided",
     })
-    .uuid({ message: "Featured image ID must be a valid UUID" }),
+    .uuid({ message: "Featured image must be provided" }),
 
   coverImageId: z
     .string({ invalid_type_error: "Cover image ID must be a UUID string" })
     .uuid({ message: "Cover image ID must be a valid UUID" })
-    .optional(),
+    .nullish(),
 
   categoryId: z
     .string({
@@ -96,8 +96,8 @@ export type NewsEventFormSchemaValues = z.infer<typeof CreateBlogSchema>;
 export const newsEventFormDefaultValues: Partial<NewsEventFormSchemaValues> = {
   title: "",
   categoryId: "",
-  featuredImageId: "",
-  coverImageId: "",
+  featuredImageId: undefined,
+  coverImageId: null,
   summary: "",
   content: "",
 };

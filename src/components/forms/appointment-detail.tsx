@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Appointment } from "@/schema/appointment-schema";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAppMutation } from "@/utils/react-query";
 import { format } from "date-fns";
 import { Button } from "../ui/button";
@@ -31,19 +30,12 @@ export default function AppointmentDetailsPage({
 }: {
   appointment: Appointment;
 }) {
-  const queryClient = useQueryClient();
 
   const [deleteDialogId, setDeleteDialogId] = useState<string | null>(null);
   const { mutateAsync: deleteDoctor, isPending: isDeleting } = useAppMutation({
     type: "delete",
     url: `/appointments`,
-    onSuccess: () => {
-      // Optionally refetch or update the UI
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
-    },
-    onError: () => {
-      // Optionally show an error toast
-    },
+   
   });
 
   const handleDelete = (id: string) => {

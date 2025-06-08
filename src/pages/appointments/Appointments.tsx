@@ -17,7 +17,6 @@ import type {
   Appointment,
   AppointmentResponse,
 } from "@/schema/appointment-schema";
-import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import PaginationComponent from "@/components/pagination/pagination";
@@ -74,19 +73,12 @@ function AppointmentsTable() {
 }
 
 function AppointmentList({ appointment }: { appointment: Appointment }) {
-  const queryClient = useQueryClient();
   const [deleteDialogId, setDeleteDialogId] = useState<string | null>(null);
 
   const { mutateAsync: deleteDoctor, isPending: isDeleting } = useAppMutation({
     type: "delete",
     url: `/appointments`,
-    onSuccess: () => {
-      // Optionally refetch or update the UI
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
-    },
-    onError: () => {
-      // Optionally show an error toast
-    },
+    queryKey: ["appointments"],
   });
 
   const handleDelete = (id: string) => {

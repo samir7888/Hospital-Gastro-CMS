@@ -20,7 +20,6 @@ import {
 import { Link, useSearchParams } from "react-router-dom";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import type { Doctor, DoctorsResponse } from "@/schema/Doctors";
-import { useQueryClient } from "@tanstack/react-query";
 import SearchInput from "@/components/helpers/search-input";
 import PaginationComponent from "@/components/pagination/pagination";
 
@@ -89,18 +88,11 @@ function DoctorsGrid() {
 }
 
 function DoctorCard({ doctor }: { doctor: Doctor }) {
-  const queryClient = useQueryClient();
 
   const { mutateAsync: deleteDoctor, isPending: isDeleting } = useAppMutation({
     type: "delete",
     url: `/doctors/${doctor.id}`,
-    onSuccess: () => {
-      // Optionally refetch or update the UI
-      queryClient.invalidateQueries({ queryKey: ["doctors"] });
-    },
-    onError: () => {
-      // Optionally show an error toast
-    },
+   
   });
 
   const handleDeleteConfirm = () => {

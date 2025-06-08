@@ -4,7 +4,6 @@ import { useAppMutation } from "@/utils/react-query";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import CategoryList from "./CategoryList";
@@ -25,14 +24,10 @@ const CategoryPage = () => {
     defaultValues: { name: "" },
   });
 
-  const queryClient = useQueryClient();
   const { mutate: createCategory } = useAppMutation({
     type: "post",
     url: "/blog-categories",
-    onSuccess: () => {
-      form.reset();
-      queryClient.invalidateQueries({ queryKey: ["blog-categories"] });
-    },
+   
   });
 
   const handleCreateCategory = form.handleSubmit((data) => {

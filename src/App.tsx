@@ -41,9 +41,9 @@ function App() {
             element={
               <PersistentRefreshToken>
                 <AuthGuard>
-                  <Applayout />
-                </AuthGuard>
-              </PersistentRefreshToken>
+              <Applayout />
+                 </AuthGuard>
+               </PersistentRefreshToken>
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />

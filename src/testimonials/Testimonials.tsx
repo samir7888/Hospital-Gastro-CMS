@@ -22,7 +22,6 @@ import type {
   TestimonialResponse,
 } from "@/schema/testmonial-schema";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
 
 
@@ -83,19 +82,12 @@ function TestimonialsGrid() {
 }
 
 function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
-  const queryClient = useQueryClient();
 
   const { mutateAsync: deleteTestimonial, isPending: isDeleting } =
     useAppMutation({
       type: "delete",
       url: `/testimonials/${testimonial.id}`,
-      onSuccess: () => {
-        // Optionally refetch or update the UI
-        queryClient.invalidateQueries({ queryKey: ["testimonials"] });
-      },
-      onError: () => {
-        // Optionally show an error toast
-      },
+     queryKey: ["testimonials"],
     });
 
   const handleDeleteConfirm = () => {

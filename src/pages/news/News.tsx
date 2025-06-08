@@ -19,7 +19,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import SearchInput from "@/components/helpers/search-input";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import PaginationComponent from "@/components/pagination/pagination";
-import { useQueryClient } from "@tanstack/react-query";
 import type {
   BaseNewsAndEvents,
   NewsAndEventsResponse,
@@ -71,7 +70,6 @@ function NewsGrid() {
   const {
     data: newsAndEvents,
     isLoading,
-    isError,
   } = useAppQuery<NewsAndEventsResponse>({
     queryKey: ["blogs", searchParam.toString()],
     url: `/blogs?${searchParam.toString()}`,
@@ -80,9 +78,7 @@ function NewsGrid() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  if (isError) {
-    return <NoNews />;
-  }
+
   if (newsAndEvents?.data.length === 0) {
     return <NoNews />;
   }
@@ -104,18 +100,10 @@ function NewsGrid() {
 }
 
 function NewsCard({ blogs }: { blogs: BaseNewsAndEvents }) {
-  const queryClient = useQueryClient();
-
   const { mutateAsync: deleteNews, isPending: isDeleting } = useAppMutation({
     type: "delete",
     url: `/blogs/${blogs.slug}`,
-    onSuccess: () => {
-      // Optionally refetch or update the UI
-      queryClient.invalidateQueries({ queryKey: ["blogs"] });
-    },
-    onError: () => {
-      // Optionally show an error toast
-    },
+    queryKey: ["blogs"],
   });
 
   const handleDeleteConfirm = () => {
@@ -126,7 +114,7 @@ function NewsCard({ blogs }: { blogs: BaseNewsAndEvents }) {
     <Card key={blogs.id} className="overflow-hidden group">
       <div className="aspect-[1/1] relative group overflow-hidden">
         <img
-          src={blogs?.coverImage?.url}
+          src={blogs?.featuredImage?.url}
           alt={blogs.title}
           className="object-cover w-full h-full rounded-2xl transition-transform group-hover:scale-105 duration-300"
         />
@@ -207,7 +195,6 @@ function NewsCard({ blogs }: { blogs: BaseNewsAndEvents }) {
 
 function NoNews() {
   const [searchParam] = useSearchParams();
-  const searchTerm = searchParam.get("search") || "";
 
   return (
     <Card className="border-dashed">
@@ -217,18 +204,19 @@ function NoNews() {
         </div>
         <h3 className="text-lg font-semibold mb-1">No items found</h3>
         <p className="text-muted-foreground text-center mb-4">
-          {searchTerm
+          {searchParam.toString()?.length > 0 
             ? "No items match your search criteria"
             : "You haven't added any blogs or events yet"}
         </p>
-        {!searchTerm && (
-          <Button asChild>
-            <Link to="/news/new">
-              <Plus className="h-4 w-4 mr-1" />
-              Add Your First Item
-            </Link>
-          </Button>
-        )}
+        {!searchParam.toString() ||
+          (searchParam.toString()?.length === 0 && (
+            <Button asChild>
+              <Link to="/news/new">
+                <Plus className="h-4 w-4 mr-1" />
+                Add Your First Item
+              </Link>
+            </Button>
+          ))}
       </CardContent>
     </Card>
   );

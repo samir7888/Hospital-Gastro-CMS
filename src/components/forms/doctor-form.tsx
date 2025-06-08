@@ -39,7 +39,6 @@ import { ELanguages, ESpecialization, EWeekDays } from "@/types/enums";
 import MultiSelect from "./multi-select";
 import { useAppMutation } from "@/utils/react-query";
 import type { ImageResponse } from "@/schema/global.schema";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function DoctorForm({
   defaultValues,
@@ -50,25 +49,23 @@ export default function DoctorForm({
 }) {
   const navigate = useNavigate();
   const params = useParams();
-  const queryClient = useQueryClient();
-  const { mutate: createDoctor, isPending } = useAppMutation({
-    type: defaultValues ? "patch" : "post",
-    url: defaultValues ? `/doctors/${params.id}` : "/doctors",
-    onSuccess: () => {
-      form.reset();
-      queryClient.invalidateQueries({ queryKey: ["doctor", params.id] });
-      navigate("/doctors");
-    },
-  });
 
   const form = useForm<CreateDoctorInput>({
     resolver: zodResolver(createDoctorSchema),
     defaultValues: defaultValues ?? doctorFormDefaultValues,
   });
 
-  function onSubmit(data: CreateDoctorInput) {
+  const { mutateAsync: createDoctor, isPending } = useAppMutation({
+    type: defaultValues ? "patch" : "post",
+    url: defaultValues ? `/doctors/${params.id}` : "/doctors",
+    queryKey: ["doctor", params.id!],
+    form,
+  });
+
+  async function onSubmit(data: CreateDoctorInput) {
     // Call the mutation with the processed data
-    createDoctor({ data });
+    await createDoctor({ data });
+    navigate("/doctors");
   }
 
   function handleAboutChange(html: string) {
@@ -224,7 +221,7 @@ export default function DoctorForm({
                 <FormField
                   control={form.control}
                   name="certifications"
-                  render={({ field }) => ( 
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Certifications</FormLabel>
                       <FormControl>

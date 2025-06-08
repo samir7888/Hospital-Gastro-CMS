@@ -12,18 +12,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import {
   companyInfoSchema,
   type CompanyInfoResponse,
   type ContactType,
 } from "@/schema/company-schema";
-import { ESocialNetwork } from "@/types/enums";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
-import { toast } from "sonner";
+import FormErrorMessage from "@/components/ui/form-error-message";
 
 const CompanyInfoForm = () => {
   const { data: companyInfo, isLoading: isLoadingInfo } =
@@ -31,17 +35,6 @@ const CompanyInfoForm = () => {
       url: "company-info",
       queryKey: ["company-info"],
     });
-
-  const { mutate: updateCompanyInfo, isPending: isUpdating } = useAppMutation({
-    url: "company-info",
-    type: "patch",
-    onSuccess: () => toast.success("Company information updated successfully!"),
-    
-    onError: (error: any) => {
-      console.log(error)
-      toast.error(error?.message.message || "Failed to update company information");
-    },
-  });
 
   const form = useForm<ContactType>({
     resolver: zodResolver(companyInfoSchema),
@@ -53,8 +46,14 @@ const CompanyInfoForm = () => {
       workingHours: "",
       mapLink: "",
       email: [""],
-      socialProfiles: [{ link: "", network: ESocialNetwork.Facebook }],
+      socialProfiles: [''],
     },
+  });
+
+  const { mutate: updateCompanyInfo, isPending: isUpdating } = useAppMutation({
+    url: "company-info",
+    type: "patch",
+    form,
   });
 
   const { control, handleSubmit, reset } = form;
@@ -75,16 +74,13 @@ const CompanyInfoForm = () => {
     fields: socialFields,
     append: appendSocial,
     remove: removeSocial,
-  } = useFieldArray({ control, name: "socialProfiles" });
+  } = useFieldArray<any>({ control, name: "socialProfiles" });
 
   useEffect(() => {
     if (companyInfo) {
       reset({
         ...companyInfo,
-        socialProfiles: companyInfo.socialProfiles.map((profile) => ({
-          link: profile.link,
-          network: profile.network,
-        })),
+       
       });
     }
   }, [companyInfo, reset]);
@@ -99,7 +95,7 @@ const CompanyInfoForm = () => {
       </div>
     );
   }
-
+  console.log(form.formState.errors.email);
   return (
     <Form {...form}>
       <form
@@ -155,7 +151,7 @@ const CompanyInfoForm = () => {
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Textarea rows={3} placeholder="Enter address" {...field} />
+                    <Input placeholder="Enter address" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -210,10 +206,18 @@ const CompanyInfoForm = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             {phoneFields.map((field, index) => (
-              <div key={field.id} className="flex items-center space-x-2">
-                <Input
-                  {...form.register(`phone.${index}`)}
-                  placeholder="Enter phone number"
+              <div key={field.id} className="flex space-x-2">
+                <FormField
+                  name={`phone.${index}`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <Input placeholder="Enter phone number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
                 <Button
                   type="button"
@@ -225,6 +229,9 @@ const CompanyInfoForm = () => {
               </div>
             ))}
           </CardContent>
+          <CardFooter>
+            <FormErrorMessage error={form.formState.errors.phone} />
+          </CardFooter>
         </Card>
 
         {/* Emails */}
@@ -241,11 +248,18 @@ const CompanyInfoForm = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             {emailFields.map((field, index) => (
-              <div key={field.id} className="flex items-center space-x-2">
-                <Input
-                  {...form.register(`email.${index}`)}
-                  placeholder="Enter email"
-                  type="email"
+              <div key={field.id} className="flex space-x-2">
+                <FormField
+                  name={`email.${index}`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <Input placeholder="Eg. abc@gmail.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
                 <Button
                   type="button"
@@ -267,7 +281,7 @@ const CompanyInfoForm = () => {
               type="button"
               variant="ghost"
               onClick={() =>
-                appendSocial({ link: "", network: ESocialNetwork.Facebook })
+                appendSocial("")
               }
             >
               <Plus className="h-4 w-4 mr-1" /> Add
@@ -276,24 +290,21 @@ const CompanyInfoForm = () => {
           <CardContent className="space-y-2">
             {socialFields.map((field, index) => (
               <div key={field.id} className="flex flex-col md:flex-row gap-2">
-                <select
-                  {...form.register(`socialProfiles.${index}.network`)}
-                  className="px-3 py-2 border rounded-md"
-                >
-                  {Object.values(ESocialNetwork).map((network) => (
-                    <option
-                      className="capitalize"
-                      key={network}
-                      value={network}
-                    >
-                      {network}
-                    </option>
-                  ))}
-                </select>
-                <Input
-                  {...form.register(`socialProfiles.${index}.link`)}
-                  placeholder="Enter link"
+               
+
+                <FormField
+                  name={`socialProfiles.${index}`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <Input placeholder="Eg. https://facebook.com/link" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
+
                 <Button
                   type="button"
                   variant="ghost"

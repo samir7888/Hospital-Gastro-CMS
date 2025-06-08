@@ -30,7 +30,6 @@ import {
   type CreateTestimonialType,
 } from "@/schema/testmonial-schema";
 import type { ImageResponse } from "@/schema/global.schema";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAppMutation } from "@/utils/react-query";
 
 export default function TestimonialForm({
@@ -42,16 +41,11 @@ export default function TestimonialForm({
 }) {
   const navigate = useNavigate();
   const params = useParams();
-  const queryClient = useQueryClient();
 
-  const { mutate: createTestimonial, isPending } = useAppMutation({
+  const { mutateAsync: createTestimonial, isPending } = useAppMutation({
     type: defaultValues ? "patch" : "post",
     url: defaultValues ? `/testimonials/${params.id}` : "/testimonials", // Fixed: was "/doctors"
-    onSuccess: () => {
-      form.reset();
-      queryClient.invalidateQueries({ queryKey: ["testimonials", params.id] });
-      navigate("/testimonials");
-    },
+    queryKey: ["testimonials"],
   });
 
   const form = useForm<CreateTestimonialType>({
@@ -59,8 +53,9 @@ export default function TestimonialForm({
     defaultValues: defaultValues || testimonialFormDefaultValues, // Use provided defaultValues
   });
 
-  function onSubmit(data: CreateTestimonialType) {
-    createTestimonial({ data });
+  async function onSubmit(data: CreateTestimonialType) {
+    await createTestimonial({ data });
+    navigate("/testimonials");
   }
 
   return (
@@ -78,9 +73,20 @@ export default function TestimonialForm({
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <FileUpload
-                      currentImage={uploadedImage}
+                    <FormField
+                      control={form.control}
                       name="personImageId"
+                      render={() => (
+                        <FormItem>
+                          <FormControl>
+                            <FileUpload
+                              currentImage={uploadedImage}
+                              name="personImageId"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
                   </CardContent>
                 </Card>
@@ -126,7 +132,14 @@ export default function TestimonialForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Rating</FormLabel>
-                          <Input placeholder="Enter rating" type="number" {...field} min={1} max={5} step={0.5} />
+                          <Input
+                            placeholder="Enter rating"
+                            type="number"
+                            {...field}
+                            min={1}
+                            max={5}
+                            step={0.5}
+                          />
                           <FormMessage />
                         </FormItem>
                       )}
@@ -158,7 +171,7 @@ export default function TestimonialForm({
 
               <div className="flex justify-end gap-4">
                 <Button type="button" variant="outline" asChild>
-                  <Link to="/dashboard/testimonials">Cancel</Link>
+                  <Link to="/testimonials">Cancel</Link>
                 </Button>
                 <Button type="submit" disabled={isPending}>
                   {isPending ? "Saving..." : "Save Testimonial"}

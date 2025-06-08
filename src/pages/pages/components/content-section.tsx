@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -30,7 +29,7 @@ import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import { z } from "zod";
 import { Plus, Trash2 } from "lucide-react";
 import type { HomePageData } from "@/schema/pages-schemas/hero-page.-schema";
-import { imageSchema } from "@/schema/global.schema";
+import { imageSchema, type ImageResponse } from "@/schema/global.schema";
 import { toast } from "sonner";
 
 // Schema for hero section
@@ -81,23 +80,12 @@ interface HeroSectionProps {
   onError?: (error: any) => void;
 }
 
-const defaultHeroValues: HeroSectionType = {
-  title: "",
-  subtitle: "",
-  imageId: "",
-  cta: [],
-};
+const HeroSection: React.FC<HeroSectionProps> = (props) => {
+  const { apiEndpoint, queryKey } = props;
 
-const HeroSection: React.FC<HeroSectionProps> = ({
-  apiEndpoint,
-  queryKey,
-  dataPath = "heroSection",
-  cardTitle = "Hero Section",
-  cardDescription = "Update the content for your hero section",
-}) => {
   // Fetch existing data
   const {
-    data: existingData,
+    data,
     isLoading: isDataLoading,
     refetch,
   } = useAppQuery<HomePageData>({
@@ -114,9 +102,52 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     },
   });
 
+  if (isDataLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className="h-10 bg-gray-200 rounded"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!data) {
+    return <div>Something went wrong!</div>;
+  }
+
+  return (
+    <HeroForm
+      {...props}
+      defaultValues={{
+        cta: data.heroSection.cta,
+        title: data.heroSection.title,
+        subtitle: data.heroSection.subtitle,
+        imageId: data.heroSection.image?.id,
+      }}
+      currentImage={data.heroSection.image}
+    />
+  );
+};
+
+function HeroForm({
+  apiEndpoint,
+  dataPath = "heroSection",
+  cardTitle = "Hero Section",
+  cardDescription = "Update the content for your hero section",
+  defaultValues,
+  currentImage,
+}: HeroSectionProps & {
+  defaultValues: HeroSectionType;
+  currentImage: ImageResponse;
+}) {
   const form = useForm<HeroSectionType>({
     resolver: zodResolver(heroSectionSchema),
-    defaultValues: defaultHeroValues,
+    defaultValues,
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -124,33 +155,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     name: "cta",
   });
 
-  // Update form when data is loaded
-  useEffect(() => {
-    if (existingData && dataPath) {
-      if (existingData) {
-        form.reset({
-          title: existingData.heroSection.title || "",
-          subtitle: existingData.heroSection.subtitle || "",
-          imageId: existingData.heroSection.image?.id || "",
-          cta: existingData.heroSection.cta || [],
-        });
-      }
-    }
-  }, [existingData, dataPath, form]);
-
   // Mutation for updating hero section
   const { mutate: updateHeroSection, isPending: isUpdating } = useAppMutation({
     type: "patch",
     url: apiEndpoint,
-
-    onSuccess: () => {
-      toast.success("Hero section updated successfully!");
-    },
-    // You might want to show a toast here
-
-    onError: (error: any) => {
-      toast.error(error?.message || "Failed to update hero section");
-    },
   });
 
   // Handle form submission
@@ -168,20 +176,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   const removeCTA = (index: number) => {
     remove(index);
   };
-
-  if (isDataLoading) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-10 bg-gray-200 rounded"></div>
-            <div className="h-10 bg-gray-200 rounded"></div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <FormProvider {...form}>
@@ -347,7 +341,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                       <FormItem>
                         <FormControl>
                           <FileUpload
-                            currentImage={existingData?.heroSection.image}
+                            currentImage={currentImage}
                             name="imageId"
                           />
                         </FormControl>
@@ -357,9 +351,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                   />
                 </CardContent>
               </Card>
-
-
-
 
               <div className="flex justify-end">
                 <Button type="submit" disabled={isUpdating}>
@@ -372,6 +363,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
     </FormProvider>
   );
-};
+}
 
 export default HeroSection;

@@ -57,12 +57,7 @@ export enum EFaqType {
   EmergencyCare = "emergency_care",
 }
 
-export enum ESocialNetwork {
-  Facebook = "facebook",
-  Twitter = "twitter",
-  Instagram = "instagram",
-  LinkedIn = "linkedin",
-}
+
 
 export enum EButtonVariant {
   Primary = "primary",

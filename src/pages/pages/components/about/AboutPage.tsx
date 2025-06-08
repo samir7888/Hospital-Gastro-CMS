@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
 import MissionVisionSection from "./mission-section";
 import JourneySection from "./journey-section";
 import CoreValuesSection from "./core-value-section";
@@ -102,7 +101,6 @@ export default function AboutPage() {
   const {
     data: existingData,
     isLoading: isDataLoading,
-    refetch,
   } = useAppQuery<AboutPageData>({
     url: "/about-page",
     queryKey: ["about-page"],
@@ -145,52 +143,28 @@ export default function AboutPage() {
   const updateMissionVisionMutation = useAppMutation({
     url: "/about-page",
     type: "patch",
-    onSuccess: () => {
-      toast.success("Mission & Vision updated successfully!");
-      refetch();
-    },
-    onError: (error: any) => {
-      toast.error(error?.message || "Failed to update Mission & Vision");
-    },
+   
   });
 
   // Update Stats Mutation
   const updateStatsMutation = useAppMutation({
     url: "/about-page",
     type: "patch",
-    onSuccess: () => {
-      toast.success("Statistics updated successfully!");
-      refetch();
-    },
-    onError: (error: any) => {
-      toast.error(error?.message || "Failed to update statistics");
-    },
+   
   });
 
   // Update Journey Mutation
   const updateJourneyMutation = useAppMutation({
     url: "/about-page",
     type: "patch",
-    onSuccess: () => {
-      toast.success("Journey updated successfully!");
-      refetch();
-    },
-    onError: (error: any) => {
-      toast.error(error?.message || "Failed to update journey");
-    },
+  
   });
 
   // Update Core Values Mutation
   const updateCoreValuesMutation = useAppMutation({
     url: "/about-page",
     type: "patch",
-    onSuccess: () => {
-      toast.success("Core Values updated successfully!");
-      refetch();
-    },
-    onError: (error: any) => {
-      toast.error(error?.message || "Failed to update core values");
-    },
+   
   });
 
   // Load existing data into forms

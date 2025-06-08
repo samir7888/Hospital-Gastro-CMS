@@ -76,5 +76,5 @@ export const serviceFormDefaultValues: Partial<ServiceSchemaType> = {
   title: "",
   summary: "",
   description: "",
-  coverImageId: "",
+  coverImageId: null,
 };

@@ -30,7 +30,6 @@ import {
   newsEventFormDefaultValues,
   type NewsEventFormSchemaValues,
 } from "@/schema/news-type";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAppMutation } from "@/utils/react-query";
 import { CategorySelect } from "../helpers/single-select";
 import type { ImageResponse } from "@/schema/global.schema";
@@ -47,16 +46,11 @@ export default function NewsEventEditPage({
 }) {
   const navigate = useNavigate();
   const params = useParams();
-  const queryClient = useQueryClient();
 
   const { mutate: createBlog, isPending } = useAppMutation({
     type: defaultValues ? "patch" : "post",
     url: defaultValues ? `/blogs/${params.id}` : "/blogs", // Fixed: was "/doctors"
-    onSuccess: () => {
-      form.reset();
-      queryClient.invalidateQueries({ queryKey: ["blogs", params.id] });
-      navigate("/news");
-    },
+    queryKey: ["blogs", params.id!],
   });
 
   const form = useForm<NewsEventFormSchemaValues>({
@@ -66,6 +60,7 @@ export default function NewsEventEditPage({
 
   function onSubmit(data: NewsEventFormSchemaValues) {
     createBlog({ data });
+    navigate("/news");
   }
 
   function handleContentChange(html: string) {

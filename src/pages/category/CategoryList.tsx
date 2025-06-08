@@ -2,16 +2,13 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import type { Category, CategoryResponse } from '@/schema/news-type';
 import { useAppMutation, useAppQuery } from '@/utils/react-query';
-import { useQueryClient } from '@tanstack/react-query';
 import { Edit2, Save, Trash2, X } from 'lucide-react';
 import  { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 
 const CategoryList = () => {
      const params = useParams();
 
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
@@ -28,22 +25,13 @@ const CategoryList = () => {
     {
       type: "delete",
       url: `/blog-categories`,
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["blog-categories"] });
-        navigate("/news/category");
-      },
-      onError: (error) => console.error("Delete failed:", error),
+     
     }
   );
   const { mutateAsync: editCategory, isPending: isEditing } = useAppMutation({
     type: "patch",
     url: `/blog-categories/${params.id}`,
-    onSuccess: () => {
-      setEditingCategory(null);
-      setEditCategoryName("");
-      queryClient.invalidateQueries({ queryKey: ["blog-categories"] });
-    },
-    onError: (error) => console.error("Edit failed:", error),
+  
   });
   const handleEditCategory = async () => {
     if (!editCategoryName.trim()) return;

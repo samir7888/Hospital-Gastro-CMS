@@ -19,7 +19,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAppMutation } from "@/utils/react-query";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 // Define or import your schema and type
@@ -45,13 +44,7 @@ const LegalPage = ({
   const updateSettingsMutation = useAppMutation({
     url: "general-setting",
     type: "patch",
-    onSuccess: () => {
-      toast.success("Settings updated successfully!");
-    },
-    onError: (error) => {
-      toast.error("Failed to update settings. Please try again.");
-      console.error("Update error:", error);
-    },
+   
   });
 
   function onSubmit(data: LegalPageSchemaType) {

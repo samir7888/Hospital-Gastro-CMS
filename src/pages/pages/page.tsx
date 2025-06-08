@@ -1,77 +1,32 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import HeroSection from "./components/content-section";
 import MetaDataSection from "./components/MetaData/meta-data";
 import AboutPage from "./components/about/AboutPage";
-
-// Page configuration
-const pageConfigs = {
-  home: {
-    apiEndpoint: "/home-page",
-    queryKey: ["home-page"],
-    dataPath: "heroSection",
-    cardTitle: "Home Hero Section",
-    cardDescription: "Update the hero content for your homepage",
-  },
-  about: {
-    apiEndpoint: "/about-page",
-    queryKey: ["about-page"],
-    dataPath: "heroSection",
-    cardTitle: "About Hero Section",
-    cardDescription: "Update the about section of your website",
-  },
-  services: {
-    apiEndpoint: "/services-page",
-    queryKey: ["services-page"],
-    dataPath: "heroSection",
-    cardTitle: "Services Hero Section",
-    cardDescription: "Update the hero content for your services page",
-  },
-  doctors: {
-    apiEndpoint: "/doctors-page",
-    queryKey: ["doctors-page"],
-    dataPath: "heroSection",
-    cardTitle: "Doctors Hero Section",
-    cardDescription: "Update the hero content for your doctors page",
-  },
-  news: {
-    apiEndpoint: "/blogs-page",
-    queryKey: ["blogs-page"],
-    dataPath: "heroSection",
-    cardTitle: "Blogs Hero Section",
-    cardDescription: "Update the hero content for your blogs page",
-  },
-};
-
-type PageType = keyof typeof pageConfigs;
+import { useSearchParams } from "react-router-dom";
+import { ETabs, pageConfigs, tabsSchema } from "@/lib/page-config";
 
 export default function HeroPage() {
-  const [activeTab, setActiveTab] = useState<PageType>("home");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || ETabs.Home;
 
   useEffect(() => {
-    const getTabFromHash = () => {
-      const hash = window.location.hash.slice(1);
-      return hash && pageConfigs[hash as PageType]
-        ? (hash as PageType)
-        : "home";
-    };
-    setActiveTab(getTabFromHash());
-    const handleHashChange = () => setActiveTab(getTabFromHash());
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
+    const tab = searchParams.get("tab");
+    if (!tab) return;
+    const { error } = tabsSchema.safeParse(tab);
+
+    if (error) {
+      searchParams.delete("tab");
+      setSearchParams(searchParams);
+    }
   }, []);
 
-  const handleTabChange = (value: string) => {
-    const newTab = value as PageType;
-    setActiveTab(newTab);
-    window.location.hash = newTab;
-  };
-
-  const renderHeroSection = (pageType: PageType) => {
+  const renderHeroSection = (pageType: ETabs) => {
     const config = pageConfigs[pageType];
+
     return (
       <HeroSection
         apiEndpoint={config.apiEndpoint}
@@ -94,7 +49,14 @@ export default function HeroPage() {
         Manage content for different sections of your website
       </p>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={(val) => {
+          searchParams.set("tab", val);
+          setSearchParams(searchParams);
+        }}
+        className="mb-6"
+      >
         <TabsList className="mb-6">
           <TabsTrigger value="home">Home</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
@@ -104,8 +66,9 @@ export default function HeroPage() {
         </TabsList>
 
         {Object.keys(pageConfigs).map((page) => {
-          const pageType = page as PageType;
-          const config = pageConfigs[pageType];
+          const config = pageConfigs[page as ETabs];
+          const pageType = page as ETabs;
+
           return (
             <TabsContent key={page} value={page} className="space-y-6">
               <h2 className="text-2xl font-semibold">

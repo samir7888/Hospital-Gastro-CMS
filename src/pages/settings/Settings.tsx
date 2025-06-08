@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/form";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useAppMutation } from "@/utils/react-query";
-import { toast } from "sonner";
 import { imageSchema, type ImageResponse } from "@/schema/global.schema";
 import { FileUpload } from "@/components/file-upload";
 import LegalPage from "./components/legalPage";
@@ -80,13 +79,7 @@ export default function SettingsPage({
   const updateSettingsMutation = useAppMutation({
     url: "general-setting",
     type: "patch",
-    onSuccess: () => {
-      toast.success("Settings updated successfully!");
-    },
-    onError: (error) => {
-      toast.error("Failed to update settings. Please try again.");
-      console.error("Update error:", error);
-    },
+   
   });
 
   function onSubmit(data: FormValues) {

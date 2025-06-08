@@ -15,11 +15,10 @@ import { useAppQuery } from "@/utils/react-query";
 const metaDataSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  keywords: z
-    .array(
-      z.string({ invalid_type_error: "Each keyword must be a string" }),
-      { invalid_type_error: "keywords must be an array of strings" }
-    ),
+  keywords: z.array(
+    z.string({ invalid_type_error: "Each keyword must be a string" }),
+    { invalid_type_error: "keywords must be an array of strings" }
+  ),
 });
 
 type MetaDataFormValues = z.infer<typeof metaDataSchema>;
@@ -61,24 +60,26 @@ const MetaDataSection: React.FC<MetaDataSectionProps> = ({
     },
   });
 
- useEffect(() => {
-  if (existingData && !isDataLoading) {
-    form.reset({
-      title: existingData?.metadata?.title || "",
-      description: existingData?.metadata?.description || "",
-      keywords: Array.isArray(existingData?.metadata?.keywords)
-        ? existingData?.metadata?.keywords
-        : typeof existingData?.metadata?.keywords === "string"
-        ? (existingData.metadata.keywords as string).split(",").map((item) => item.trim()).filter(Boolean)
-        : [],
-    });
-  }
-}, [existingData, isDataLoading, form]);
-
+  useEffect(() => {
+    if (existingData && !isDataLoading) {
+      form.reset({
+        title: existingData?.metadata?.title || "",
+        description: existingData?.metadata?.description || "",
+        keywords: Array.isArray(existingData?.metadata?.keywords)
+          ? existingData?.metadata?.keywords
+          : typeof existingData?.metadata?.keywords === "string"
+          ? (existingData.metadata.keywords as string)
+              .split(",")
+              .map((item) => item.trim())
+              .filter(Boolean)
+          : [],
+      });
+    }
+  }, [existingData, isDataLoading, form]);
 
   const onSubmit = async (data: MetaDataFormValues) => {
     try {
-      const res = await axios.patch(`${apiEndpoint}`, { metadata:data });
+      const res = await axios.patch(`${apiEndpoint}`, { metadata: data });
       if (res.status === 200) {
         toast.success("Meta data updated successfully!");
       }
@@ -103,6 +104,8 @@ const MetaDataSection: React.FC<MetaDataSectionProps> = ({
         <div>
           <Textarea
             placeholder="Description"
+            className="resize-none field-sizing-content"
+            rows={3}
             {...form.register("description")}
           />
           {form.formState.errors.description && (
@@ -112,38 +115,35 @@ const MetaDataSection: React.FC<MetaDataSectionProps> = ({
           )}
         </div>
         <div>
- 
-  <Input
-    id="keywords"
-    placeholder="e.g. Cardiology, Orthopedics"
-    value={
-      Array.isArray(form.watch("keywords"))
-        ? form.watch("keywords").join(", ")
-        : ""
-    }
-    onChange={(e) => {
-      const value = e.target.value;
-      if (value.trim()) {
-        form.setValue(
-          "keywords",
-          value
-            .split(",")
-            .map((item) => item.trim())
-        );
-      } else {
-        form.setValue("keywords", []);
-      }
-    }}
-  />
-  <p className="text-gray-500 text-sm">
-    Enter keywords separated by commas (optional)
-  </p>
-  {form.formState.errors.keywords && (
-    <p className="text-red-500 text-sm">
-      {form.formState.errors.keywords.message}
-    </p>
-  )}
-</div>
+          <Input
+            id="keywords"
+            placeholder="e.g. Cardiology, Orthopedics"
+            value={
+              Array.isArray(form.watch("keywords"))
+                ? form.watch("keywords").join(", ")
+                : ""
+            }
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.trim()) {
+                form.setValue(
+                  "keywords",
+                  value.split(",").map((item) => item.trim())
+                );
+              } else {
+                form.setValue("keywords", []);
+              }
+            }}
+          />
+          <p className="text-gray-500 text-sm">
+            Enter keywords separated by commas (optional)
+          </p>
+          {form.formState.errors.keywords && (
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.keywords.message}
+            </p>
+          )}
+        </div>
 
         <Button type="submit">Update Meta Data</Button>
       </form>

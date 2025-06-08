@@ -31,11 +31,9 @@ import {
   type SingleServices,
 } from "@/schema/services-schema";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function ServicesPage() {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
 
@@ -70,17 +68,7 @@ export default function ServicesPage() {
   const { mutate: saveService, isPending } = useAppMutation({
     type: id ? "patch" : "post",
     url: "/services",
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["services"] });
-        navigate(`/services`);
-      // If creating new service, navigate to edit mode
-      if (!id && data?.id) {
-        navigate(`/services/${data.id}`);
-      }
-    },
-    onError: (error) => {
-      console.error("Save error:", error);
-    },
+    
   });
 
   function onSubmit(data: ServiceSchemaType) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -31,7 +30,6 @@ import SearchInput from "@/components/helpers/search-input";
 export default function ServicesListPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [searchParam] = useSearchParams();
   const {
     data: servicesResponse,
@@ -41,29 +39,6 @@ export default function ServicesListPage() {
     url: `/services?${searchParam.toString()}`,
     queryKey: ["services", searchParam.toString()],
   });
-
-  const { mutate: deleteService, isPending: isDeleting } = useAppMutation({
-    type: "delete",
-    url: "/services",
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["services"] });
-      setDeletingId(null);
-    },
-    onError: (error) => {
-      console.error("Delete error:", error);
-
-      setDeletingId(null);
-    },
-  });
-
-  const handleEdit = (serviceId: string) => {
-    navigate(`/services/edit/${serviceId}`);
-  };
-
-  const handleDelete = (serviceId: string) => {
-    setDeletingId(serviceId);
-    deleteService({ id: serviceId });
-  };
 
   const handleCreateNew = () => {
     navigate("/services/create");
@@ -147,18 +122,12 @@ export default function ServicesListPage() {
       </div>
       <SearchInput />
       {services.length === 0 ? (
-       <NoServices />
+        <NoServices />
       ) : (
         <>
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3  ">
             {services.map((service) => (
-              <ServiceCard
-                key={service.id}
-                service={service}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                isDeleting={deletingId === service.id && isDeleting}
-              />
+              <ServiceCard key={service.id} service={service} />
             ))}
           </div>
 
@@ -174,17 +143,18 @@ export default function ServicesListPage() {
 
 interface ServiceCardProps {
   service: Services;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
-  isDeleting: boolean;
 }
 
-function ServiceCard({
-  service,
-  onEdit,
-  onDelete,
-  isDeleting,
-}: ServiceCardProps) {
+function ServiceCard({ service }: ServiceCardProps) {
+  const { mutate: deleteService, isPending: isDeleting } = useAppMutation({
+    type: "delete",
+    url: "/services",
+  });
+  const handleDelete = (serviceId: string) => {
+    deleteService({ id: serviceId });
+  };
+  const navigate = useNavigate();
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -230,7 +200,7 @@ function ServiceCard({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onEdit(service.id)}
+            onClick={() => navigate(`/services/edit/${service.id}`)}
             className="flex items-center gap-1"
           >
             <Edit className="h-3 w-3" />
@@ -260,7 +230,7 @@ function ServiceCard({
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => onDelete(service.id)}
+                  onClick={() => handleDelete(service.id)}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
                   Delete
@@ -301,4 +271,3 @@ function NoServices() {
     </Card>
   );
 }
-

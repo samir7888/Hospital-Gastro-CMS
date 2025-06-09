@@ -11,6 +11,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormDescription,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -75,6 +76,12 @@ export function FAQForm({
                 <Input placeholder="Enter the question" {...field} />
               </FormControl>
               <FormMessage />
+                 <FormDescription>
+                Your question is a brief summary of your question
+                <span className="block mt-1 text-right text-xs text-muted-foreground">
+                  {field.value?.length || 0} / 100 characters
+                </span>
+              </FormDescription>
             </FormItem>
           )}
         />
@@ -107,7 +114,7 @@ export function FAQForm({
         <FormField
           control={form.control}
           name="description"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Answer</FormLabel>
               <FormControl>
@@ -118,6 +125,12 @@ export function FAQForm({
                 />
               </FormControl>
               <FormMessage />
+              <FormDescription>
+                Your answer is a detailed explanation of your question with rich text formatting
+                <span className="block mt-1 text-right text-xs text-muted-foreground">
+                  {field.value?.length || 0} / 500 characters
+                </span>
+              </FormDescription>
             </FormItem>
           )}
         />

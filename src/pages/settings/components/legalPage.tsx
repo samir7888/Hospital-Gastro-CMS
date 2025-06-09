@@ -23,8 +23,9 @@ import { Button } from "@/components/ui/button";
 
 // Define or import your schema and type
 const legalPageSchema = z.object({
-  privacyPolicy: z.string(),
-  termsAndConditions: z.string(),
+  privacyPolicy: z.string().min(100, "Must be between 100 and 10000 characters").max(10000, "Must be between 100 and 10000 characters"),
+  termsAndConditions: z.string().min(100, "Must be between 100 and 10000 characters").max(10000, "Must be between 100 and 10000 characters"),
+  
 });
 type LegalPageSchemaType = z.infer<typeof legalPageSchema>;
 
@@ -44,7 +45,6 @@ const LegalPage = ({
   const updateSettingsMutation = useAppMutation({
     url: "general-setting",
     type: "patch",
-   
   });
 
   function onSubmit(data: LegalPageSchemaType) {
@@ -77,10 +77,13 @@ const LegalPage = ({
                       className="min-h-[300px]"
                     />
                   </FormControl>
+                  <FormMessage />
                   <FormDescription>
                     Your hospital's privacy policy content
+                    <span className="block mt-1 text-right text-xs text-muted-foreground">
+                      {field.value?.length || 0}/1000 characters
+                    </span>
                   </FormDescription>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -99,7 +102,10 @@ const LegalPage = ({
                     />
                   </FormControl>
                   <FormDescription>
-                    Your hospital's terms and conditions content
+                    Your hospital's privacy policy content
+                    <span className="block mt-1 text-right text-xs text-muted-foreground">
+                      {field.value?.length || 0}/1000 characters
+                    </span>
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

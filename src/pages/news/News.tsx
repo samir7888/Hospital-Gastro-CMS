@@ -67,13 +67,12 @@ export default function NewsAndEventsPage() {
 function NewsGrid() {
   const [searchParam] = useSearchParams();
 
-  const {
-    data: newsAndEvents,
-    isLoading,
-  } = useAppQuery<NewsAndEventsResponse>({
-    queryKey: ["blogs", searchParam.toString()],
-    url: `/blogs?${searchParam.toString()}`,
-  });
+  const { data: newsAndEvents, isLoading } = useAppQuery<NewsAndEventsResponse>(
+    {
+      queryKey: ["blogs", searchParam.toString()],
+      url: `/blogs?${searchParam.toString()}`,
+    }
+  );
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -204,7 +203,7 @@ function NoNews() {
         </div>
         <h3 className="text-lg font-semibold mb-1">No items found</h3>
         <p className="text-muted-foreground text-center mb-4">
-          {searchParam.toString()?.length > 0 
+          {searchParam.toString()?.length > 0
             ? "No items match your search criteria"
             : "You haven't added any blogs or events yet"}
         </p>

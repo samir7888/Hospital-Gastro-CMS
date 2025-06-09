@@ -30,12 +30,10 @@ export default function AppointmentDetailsPage({
 }: {
   appointment: Appointment;
 }) {
-
   const [deleteDialogId, setDeleteDialogId] = useState<string | null>(null);
   const { mutateAsync: deleteDoctor, isPending: isDeleting } = useAppMutation({
     type: "delete",
     url: `/appointments`,
-   
   });
 
   const handleDelete = (id: string) => {
@@ -59,12 +57,13 @@ export default function AppointmentDetailsPage({
           >
             <DialogTrigger asChild>
               <Button
-              variant={"destructive"}
+                variant={"destructive"}
                 onClick={(e) => {
                   e.stopPropagation();
                   setDeleteDialogId(appointment.id);
                 }}
-              >Delete
+              >
+                Delete
                 {/* <Trash2 className="w-3 h-3" /> */}
               </Button>
             </DialogTrigger>
@@ -80,7 +79,7 @@ export default function AppointmentDetailsPage({
                   Cancel
                 </Button>
                 <Button
-                disabled={isDeleting}
+                  disabled={isDeleting}
                   variant="destructive"
                   onClick={() => {
                     handleDelete(appointment.id);
@@ -97,7 +96,9 @@ export default function AppointmentDetailsPage({
 
       <div className="bg-white rounded-lg shadow-sm border p-6">
         <div className="flex justify-between items-start mb-6">
-          <h1 className="text-2xl font-bold">Appointment #{appointment.firstName}</h1>
+          <h1 className="text-2xl font-bold">
+            Appointment #{appointment.firstName}
+          </h1>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -241,8 +242,8 @@ export default function AppointmentDetailsPage({
 
               <div className="mt-6">
                 <h3 className="font-medium mb-2">Additional Notes</h3>
-                <div className="bg-gray-50 p-4 rounded border">
-                  <p className="text-sm">
+                <div className="bg-gray-50 p-4 rounded border break-words">
+                  <p className="text-sm whitespace-pre-wrap">
                     {appointment.message || "No additional notes"}
                   </p>
                 </div>

@@ -136,13 +136,16 @@ export default function ServicesPage() {
                     <FormControl>
                       <Textarea
                         placeholder="Brief summary of your service"
-                        className="min-h-[80px]"
+                        className="min-h-[80px] resize-none "
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      A brief summary that appears in service listings
-                    </FormDescription>
+                     <FormDescription>
+                          Your service summary is a brief description of your service
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/300 characters
+                          </span>
+                        </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -165,10 +168,12 @@ export default function ServicesPage() {
                           placeholder="Enter detailed description of your service..."
                         />
                       </FormControl>
-                      <FormDescription>
-                        Detailed description of your service with rich text
-                        formatting
-                      </FormDescription>
+                       <FormDescription>
+                          Your service description is a detailed description of your service with rich text formatting
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/10000 characters
+                          </span>
+                        </FormDescription>
                       <FormMessage />
                     </FormItem>
                   );

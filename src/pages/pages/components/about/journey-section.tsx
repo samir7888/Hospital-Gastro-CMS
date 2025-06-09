@@ -127,6 +127,7 @@ function SortableMilestone({ id, index, control, onRemove }: SortableMilestonePr
             <FormLabel>Description</FormLabel>
             <FormControl>
               <Textarea
+              className="resize-none"
                 placeholder="Describe this milestone in detail..."
                 {...field}
                 rows={3}
@@ -134,6 +135,9 @@ function SortableMilestone({ id, index, control, onRemove }: SortableMilestonePr
             </FormControl>
             <FormDescription>
               Detailed description of this milestone (10-500 characters)
+              <span className="block mt-1 text-right text-xs text-muted-foreground">
+                {field.value?.length || 0}/500 characters
+              </span>
             </FormDescription>
             <FormMessage />
           </FormItem>

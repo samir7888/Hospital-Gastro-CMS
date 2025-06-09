@@ -185,6 +185,8 @@ export default function DoctorForm({
                           placeholder="15 years"
                           type="number"
                           {...field}
+                          min={1}
+                          max={50}
                         />
                       </FormControl>
                       <FormMessage />
@@ -234,7 +236,6 @@ export default function DoctorForm({
                                 value
                                   .split(",")
                                   .map((cert) => cert.trim())
-                                  .filter(Boolean)
                               );
                             } else {
                               field.onChange([]);
@@ -395,6 +396,12 @@ export default function DoctorForm({
                           {/* <Editor /> */}
                         </FormControl>
                         <FormMessage />
+                        <FormDescription>
+                          Your biography is a detailed description of your doctor with rich text formatting
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/1000 characters
+                          </span>
+                        </FormDescription>
                       </FormItem>
                     );
                   }}
@@ -411,7 +418,7 @@ export default function DoctorForm({
               </Button>
             </div>
           </div>
-        </form>
+        </form>f
       </Form>
     </div>
   );

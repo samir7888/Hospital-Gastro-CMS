@@ -48,7 +48,7 @@ export function Sidebar({ open }: SidebarProps) {
       icon: <Layout className="h-5 w-5" />,
     },
     {
-      title: "Comapany Info",
+      title: "Company Info",
       to: "/company-info",
       icon: <Group className="h-5 w-5" />,
     },

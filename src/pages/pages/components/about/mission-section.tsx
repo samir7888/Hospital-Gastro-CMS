@@ -59,7 +59,7 @@ export default function MissionVisionSection({
             <FormField
               control={form.control}
               name="mission"
-              render={() => (
+              render={({field}) => (
                 <FormItem>
                   <FormLabel>Our Mission</FormLabel>
                   <FormControl>
@@ -69,9 +69,12 @@ export default function MissionVisionSection({
                       placeholder="Enter your hospital's mission statement..."
                     />
                   </FormControl>
-                  <FormDescription>
-                    Your mission statement describes your hospital's purpose and goals
-                  </FormDescription>
+                   <FormDescription>
+                          Your mission statement describes your hospital's purpose and goals
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/500 characters
+                          </span>
+                        </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -80,7 +83,7 @@ export default function MissionVisionSection({
             <FormField
               control={form.control}
               name="vision"
-              render={() => (
+              render={({field}) => (
                 <FormItem>
                   <FormLabel>Our Vision</FormLabel>
                   <FormControl>
@@ -90,9 +93,12 @@ export default function MissionVisionSection({
                       placeholder="Enter your hospital's vision statement..."
                     />
                   </FormControl>
-                  <FormDescription>
-                    Your vision statement describes your hospital's aspirations for the future
-                  </FormDescription>
+                 <FormDescription>
+                          Your vision statement describes your hospital's aspirations for the future
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/500 characters
+                          </span>
+                        </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

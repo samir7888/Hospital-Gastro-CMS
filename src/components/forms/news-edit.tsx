@@ -47,7 +47,7 @@ export default function NewsEventEditPage({
   const navigate = useNavigate();
   const params = useParams();
 
-  const { mutate: createBlog, isPending } = useAppMutation({
+  const { mutateAsync: createBlog, isPending } = useAppMutation({
     type: defaultValues ? "patch" : "post",
     url: defaultValues ? `/blogs/${params.id}` : "/blogs", // Fixed: was "/doctors"
     queryKey: ["blogs", params.id!],
@@ -58,8 +58,8 @@ export default function NewsEventEditPage({
     defaultValues: defaultValues || newsEventFormDefaultValues, // Use provided defaultValues
   });
 
-  function onSubmit(data: NewsEventFormSchemaValues) {
-    createBlog({ data });
+  async function onSubmit(data: NewsEventFormSchemaValues) {
+   await createBlog({ data });
     navigate("/news");
   }
 
@@ -110,13 +110,16 @@ export default function NewsEventEditPage({
                         <FormControl>
                           <Textarea
                             placeholder="Brief summary (max 200 characters)"
-                            className="resize-none"
+                            className="resize-none field-sizing-content"
                             rows={3}
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          A short summary that appears in listings
+                         <FormDescription>
+                          Your summary is a brief description of your blog
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/200 characters
+                          </span>
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -141,7 +144,7 @@ export default function NewsEventEditPage({
                   <FormField
                     control={form.control}
                     name="content"
-                    render={() => (
+                    render={({field}) => (
                       <FormItem>
                         <FormControl>
                           <TiptapEditor
@@ -152,6 +155,12 @@ export default function NewsEventEditPage({
                           />
                         </FormControl>
                         <FormMessage />
+                         <FormDescription>
+                          This text appears in the website footer
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/10000 characters
+                          </span>
+                        </FormDescription>
                       </FormItem>
                     )}
                   />

@@ -14,7 +14,6 @@ export interface ITestimonial {
   personMessage: string;    
  personImage: ImageResponse ;
 }
-
 export type TestimonialResponse = ITestimonial[];
 
 

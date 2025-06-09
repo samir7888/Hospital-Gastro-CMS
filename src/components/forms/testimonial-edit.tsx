@@ -109,6 +109,7 @@ export default function TestimonialForm({
                           <Input placeholder="John Smith" {...field} />
                         </FormControl>
                         <FormMessage />
+                         
                       </FormItem>
                     )}
                   />
@@ -155,7 +156,7 @@ export default function TestimonialForm({
                         <FormControl>
                           <Textarea
                             placeholder="Enter the patient's testimonial here..."
-                            className="min-h-[150px]"
+                            className="min-h-[150px] resize-none field-sizing-content"
                             {...field}
                           />
                         </FormControl>
@@ -163,6 +164,12 @@ export default function TestimonialForm({
                           Enter the comment you want to give the doctor
                         </FormDescription>
                         <FormMessage />
+                        <FormDescription>
+                          This text appears in the website footer
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/1000 characters
+                          </span>
+                        </FormDescription>
                       </FormItem>
                     )}
                   />

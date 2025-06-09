@@ -31,19 +31,21 @@ import LegalPage from "./components/legalPage";
 const formSchema = z.object({
   companyName: z
     .string()
-    .min(1, "Company name is required")
-    .max(100, "Company name must not exceed 100 characters"),
+    .min(3, "Company name must be between 3 and 50 characters")
+    .max(50, "Company name must be between 3 and 50 characters"),
   siteTitle: z
     .string()
-    .min(1, "Site title is required")
-    .max(100, "Site title must not exceed 100 characters"),
+    .min(3, "Site title must be between 3 and 50 characters")
+    .max(50, "Site title must be between 3 and 50 characters"),
   siteDescription: z
     .string()
-    .max(500, "Site description must not exceed 500 characters")
+    .min(50, "Site description must be between 50 and 200 characters")
+    .max(200, "Site description must be between 50 and 200 characters")
     .optional(),
   footerDescription: z
     .string()
-    .max(500, "Footer description must not exceed 500 characters")
+    .min(50, "Footer description must be between 50 and 200 characters")
+    .max(200, "Footer description must be between 50 and 200 characters")
     .optional(),
   logoId: imageSchema,
 });
@@ -162,14 +164,19 @@ export default function SettingsPage({
                         <FormLabel>Site Description</FormLabel>
                         <FormControl>
                           <Textarea
+                          className="resize-none field-sizing-content"
+                            rows={3}
                             placeholder="Hospital Website Description"
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          This appears in the browser tab and search results
-                        </FormDescription>
                         <FormMessage />
+                        <FormDescription>
+                          Your hospital's website description
+                          <span className="block mt-1 text-right text-xs text-muted-foreground">
+                            {field.value?.length || 0}/200 characters
+                          </span>
+                        </FormDescription>
                       </FormItem>
                     )}
                   />
@@ -182,15 +189,16 @@ export default function SettingsPage({
                         <FormLabel>Footer Description</FormLabel>
                         <FormControl>
                           <Textarea
+                            className="resize-none min-h-20 field-sizing-content"
+                            rows={3}
                             placeholder="Brief description for website footer..."
-                            className="min-h-20"
                             {...field}
                           />
                         </FormControl>
                         <FormDescription>
                           This text appears in the website footer
                           <span className="block mt-1 text-right text-xs text-muted-foreground">
-                            {field.value?.length || 0}/500 characters
+                            {field.value?.length || 0}/200 characters
                           </span>
                         </FormDescription>
                         <FormMessage />

@@ -116,6 +116,7 @@ export default function CoreValuesSection({
                             <FormLabel>Description</FormLabel>
                             <FormControl>
                               <Textarea
+                              className="resize-none"
                                 placeholder="Describe this core value and how it guides your hospital's practices..."
                                 {...field}
                                 rows={3}

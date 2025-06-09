@@ -23,10 +23,14 @@ export type FaqResponse = {
 };
 
 export const faqSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z
+    .string()
+    .min(10, "Question must be between 10 and 100 characters long")
+    .max(100, "Question must be between 10 and 100 characters long"),
   description: z
     .string()
-    .min(10, "Description must be at least 10 characters long"),
+    .min(100, "Answer must be between 100 and 500 characters")
+    .max(500, "Answer must be between 100 and 500 characters"),
   category: z.nativeEnum(EFaqType),
 });
 

@@ -16,7 +16,6 @@ import {
   CircleHelp,
   Group,
   CalendarCheck,
-  FeatherIcon,
   Feather,
 } from "lucide-react";
 import { useState } from "react";

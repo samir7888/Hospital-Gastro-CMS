@@ -41,11 +41,11 @@ function App() {
           {/* Protected Routes */}
           <Route
             element={
-              // <PersistentRefreshToken>
-                // <AuthGuard>
+              <PersistentRefreshToken>
+                <AuthGuard>
                   <Applayout />
-                // </AuthGuard>
-              // </PersistentRefreshToken>
+                 </AuthGuard>
+               </PersistentRefreshToken>
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />

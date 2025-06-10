@@ -27,6 +27,7 @@ import MainSettingPage from "./pages/settings/MainSettingPage";
 import PersistentRefreshToken from "./components/PersistantRefreshToken";
 import FeaturesPage from "./pages/features/Features";
 import SingleFeaturePage from "./pages/features/SingleFeaturePage";
+import { FeatureForm } from "./components/forms/feature-form";
 
 function App() {
   return (
@@ -44,8 +45,8 @@ function App() {
               <PersistentRefreshToken>
                 <AuthGuard>
                   <Applayout />
-                 </AuthGuard>
-               </PersistentRefreshToken>
+                </AuthGuard>
+              </PersistentRefreshToken>
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />
@@ -56,7 +57,7 @@ function App() {
             <Route path="/appointments" element={<Appointments />} />
             <Route path="/appointments/:id" element={<Appointment />} />
             <Route path="/features" element={<FeaturesPage />} />
-            <Route path="/features/new" element={<SingleFeaturePage />} />
+            <Route path="/features/new" element={<FeatureForm />} />
             <Route path="/features/:id" element={<SingleFeaturePage />} />
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/company-info" element={<CompanyInfoPage />} />

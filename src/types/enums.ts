@@ -1,3 +1,4 @@
+
 export interface AuthUser {
   name: string;
   email: string;
@@ -63,4 +64,13 @@ export enum EButtonVariant {
   Primary = "primary",
   Secondary = "secondary",
   Outline = "outline",
+}
+
+export enum EInternalLink {
+  Home = "/",
+  About = "/about",
+  Services = "/services",
+  Doctors = "/doctors",
+  News = "/news",
+  Appointments = "/#appointments",
 }

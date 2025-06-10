@@ -150,7 +150,7 @@ function NewsCard({ blogs }: { blogs: BaseNewsAndEvents }) {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="text-white">
+                  <AlertDialogCancel >
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction

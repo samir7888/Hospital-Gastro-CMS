@@ -16,8 +16,8 @@ import HeroPage from "./pages/pages/page";
 import SingleDoctorPage from "./pages/doctors/SingleDoctorPage";
 import CategoryPage from "./pages/category/Category";
 import FAQPage from "./pages/faq/FAQSection";
-import ServicesPage from "./pages/features/SingleServicePage";
-import ServicesListPage from "./pages/features/ServicesPage";
+import ServicesPage from "./pages/services/SingleServicePage";
+import ServicesListPage from "./pages/services/ServicesPage";
 import CompanyInfoPage from "./pages/CompanyInfoPage";
 import ChangePassword from "./pages/auth/change-password";
 import ResetPassword from "./pages/auth/reset-password";
@@ -25,6 +25,8 @@ import UpdateEmailForm from "./pages/auth/change-email";
 import ForgetPasswordPage from "./pages/auth/forget-password";
 import MainSettingPage from "./pages/settings/MainSettingPage";
 import PersistentRefreshToken from "./components/PersistantRefreshToken";
+import FeaturesPage from "./pages/features/Features";
+import SingleFeaturePage from "./pages/features/SingleFeaturePage";
 
 function App() {
   return (
@@ -39,11 +41,11 @@ function App() {
           {/* Protected Routes */}
           <Route
             element={
-              <PersistentRefreshToken>
-                 <AuthGuard>
-              <Applayout />
-                  </AuthGuard>
-                </PersistentRefreshToken>
+              // <PersistentRefreshToken>
+                // <AuthGuard>
+                  <Applayout />
+                // </AuthGuard>
+              // </PersistentRefreshToken>
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />
@@ -53,6 +55,9 @@ function App() {
             <Route path="/doctors/:id" element={<SingleDoctorPage />} />
             <Route path="/appointments" element={<Appointments />} />
             <Route path="/appointments/:id" element={<Appointment />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/features/new" element={<SingleFeaturePage />} />
+            <Route path="/features/:id" element={<SingleFeaturePage />} />
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/company-info" element={<CompanyInfoPage />} />
             <Route path="/services" element={<ServicesListPage />} />

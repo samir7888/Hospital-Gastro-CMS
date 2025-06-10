@@ -59,7 +59,7 @@ export default function ServicesPage() {
         title: existingService.title,
         summary: existingService.summary,
         description: existingService.description || "", // Ensure it's not undefined
-        coverImageId: existingService.coverImage?.id || "",
+        coverImageId: existingService.coverImage?.id || null,
       });
     }
   }, [existingService, isLoadingService, form]);

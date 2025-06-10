@@ -16,6 +16,8 @@ import {
   CircleHelp,
   Group,
   CalendarCheck,
+  FeatherIcon,
+  Feather,
 } from "lucide-react";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -51,6 +53,11 @@ export function Sidebar({ open }: SidebarProps) {
       title: "Company Info",
       to: "/company-info",
       icon: <Group className="h-5 w-5" />,
+    },
+    {
+      title: "Features",
+      to: "/features",
+      icon: <Feather className="h-5 w-5" />,
     },
 
     {

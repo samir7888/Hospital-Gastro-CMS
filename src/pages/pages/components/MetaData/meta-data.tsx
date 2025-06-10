@@ -7,18 +7,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import useAxiosAuth from "@/hooks/useAuth";
 import { useEffect } from "react";
 import type { HomePageData } from "@/schema/pages-schemas/hero-page.-schema";
-import { useAppQuery } from "@/utils/react-query";
+import { useAppMutation, useAppQuery } from "@/utils/react-query";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 const metaDataSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  keywords: z.array(
-    z.string({ invalid_type_error: "Each keyword must be a string" }),
-    { invalid_type_error: "keywords must be an array of strings" }
-  ),
+  title: z
+    .string()
+    .min(3, "Title must be between 3 and 50 characters")
+    .max(50, "Title must be between 3 and 50 characters"),
+  description: z
+    .string()
+    .min(10, "Description must be between 10 and 300 characters")
+    .max(300, "Description must be between 10 and 300 characters"),
+ keywords: z.array(z.string().min(3).max(50), {
+  invalid_type_error: "keywords must be an array of strings",
+}).refine((arr) => arr.every(k => k.length >= 3 && k.length <= 50), {
+  message: "Each keyword must be between 3 and 50 characters",
+})
+,
 });
 
 type MetaDataFormValues = z.infer<typeof metaDataSchema>;
@@ -32,7 +47,6 @@ const MetaDataSection: React.FC<MetaDataSectionProps> = ({
   apiEndpoint,
   queryKey,
 }) => {
-  const axios = useAxiosAuth();
   const form = useForm<MetaDataFormValues>({
     resolver: zodResolver(metaDataSchema),
     defaultValues: {
@@ -77,76 +91,89 @@ const MetaDataSection: React.FC<MetaDataSectionProps> = ({
     }
   }, [existingData, isDataLoading, form]);
 
-  const onSubmit = async (data: MetaDataFormValues) => {
-    try {
-      const res = await axios.patch(`${apiEndpoint}`, { metadata: data });
-      if (res.status === 200) {
-        toast.success("Meta data updated successfully!");
-      }
-    } catch (error) {
-      console.error("Error updating meta data:", error);
-      toast.error("Failed to update meta data. Please try again.");
+  const { mutateAsync: updateMetaData, isPending: isUpdating } = useAppMutation(
+    {
+      type: "patch",
+      url: apiEndpoint,
+      queryKey: ["meta-data"],
     }
+  );
+
+  const onSubmit = async (data: MetaDataFormValues) => {
+    await updateMetaData({data:{metadata:data}});
   };
 
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Meta Data</h3>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <Input placeholder="Title" {...form.register("title")} />
-          {form.formState.errors.title && (
-            <p className="text-red-500 text-sm">
-              {form.formState.errors.title.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <Textarea
-            placeholder="Description"
-            className="resize-none field-sizing-content"
-            rows={3}
-            {...form.register("description")}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel />
+                <FormControl>
+                  <Input placeholder="Title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {form.formState.errors.description && (
-            <p className="text-red-500 text-sm">
-              {form.formState.errors.description.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <Input
-            id="keywords"
-            placeholder="e.g. Cardiology, Orthopedics"
-            value={
-              Array.isArray(form.watch("keywords"))
-                ? form.watch("keywords").join(", ")
-                : ""
-            }
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value.trim()) {
-                form.setValue(
-                  "keywords",
-                  value.split(",").map((item) => item.trim())
-                );
-              } else {
-                form.setValue("keywords", []);
-              }
-            }}
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel />
+                <FormControl>
+                  <Textarea
+                    placeholder="Description"
+                    className="resize-none field-sizing-content"
+                    rows={3}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <p className="text-gray-500 text-sm">
-            Enter keywords separated by commas (optional)
-          </p>
-          {form.formState.errors.keywords && (
-            <p className="text-red-500 text-sm">
-              {form.formState.errors.keywords.message}
-            </p>
-          )}
-        </div>
+          <FormField
+            control={form.control}
+            name="keywords"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel />
+                <FormControl>
+                  <Input
+                    id="keywords"
+                    placeholder="e.g. Cardiology, Orthopedics"
+                    value={field.value?.join(", ") || ""}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.trim()) {
+                        field.onChange(
+                          value.split(",").map((item) => item.trim())
+                        );
+                      } else {
+                        field.onChange([]);
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit">Update Meta Data</Button>
-      </form>
+          {
+            <Button type="submit" disabled={isUpdating}>
+              Update Metadata
+            </Button>
+          }
+        </form>
+      </Form>
     </div>
   );
 };

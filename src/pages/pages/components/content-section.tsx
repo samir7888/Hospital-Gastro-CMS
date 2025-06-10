@@ -31,22 +31,40 @@ import { Plus, Trash2 } from "lucide-react";
 import type { HomePageData } from "@/schema/pages-schemas/hero-page.-schema";
 import { imageSchema, type ImageResponse } from "@/schema/global.schema";
 import { toast } from "sonner";
+import { EInternalLink } from "@/types/enums";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // Schema for hero section
-const heroSectionSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  subtitle: z.string().min(1, "Subtitle is required"),
-  imageId: imageSchema,
-  cta: z
-    .array(
-      z.object({
-        link: z.string().min(1, "Link is required"),
-        text: z.string().min(1, "Text is required"),
-        variant: z.enum(["primary", "secondary", "outline"]),
-      })
-    )
-    .max(2, { message: "At most 2 CTAs are allowed" }),
-});
+const heroSectionSchema = z
+  .object({
+    title: z.string().min(1, "Title is required"),
+    subtitle: z.string().min(1, "Subtitle is required"),
+    imageId: imageSchema,
+    cta: z
+      .array(
+        z.object({
+          link: z.string().min(1, "Link is required"),
+          text: z.string().min(1, "Text is required"),
+          variant: z.enum(["primary", "secondary", "outline"]),
+          type: z.enum(["external", "internal"]),
+        })
+      )
+      .max(2, { message: "At most 2 CTAs are allowed" }),
+  })
+  .superRefine((data, ctx) => {
+    data.cta.forEach((cta, index) => {
+      const parsedLink = z.string().url().safeParse(cta.link);
+
+      if (cta.type === "external" && !parsedLink.success) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid url",
+          path: ["cta", index, "link"],
+        });
+      }
+    });
+    return data;
+  });
 
 type HeroSectionType = z.infer<typeof heroSectionSchema>;
 
@@ -126,7 +144,13 @@ const HeroSection: React.FC<HeroSectionProps> = (props) => {
     <HeroForm
       {...props}
       defaultValues={{
-        cta: data.heroSection.cta,
+        cta: data.heroSection.cta.map((c) => ({
+          ...c,
+          type: Object.values(EInternalLink).includes(c.link as EInternalLink)
+            ? "internal"
+            : "external",
+        })),
+
         title: data.heroSection.title,
         subtitle: data.heroSection.subtitle,
         imageId: data.heroSection.image?.id,
@@ -171,13 +195,20 @@ function HeroForm({
 
   // Add CTA button
   const addCTA = () => {
-    append({ link: "", text: "", variant: "primary" as const });
+    append({
+      link: "",
+      text: "",
+      type: "internal" as const,
+      variant: "primary" as const,
+    });
   };
 
   // Remove CTA button
   const removeCTA = (index: number) => {
     remove(index);
   };
+
+  console.log(form.formState.errors);
 
   return (
     <FormProvider {...form}>
@@ -232,6 +263,7 @@ function HeroForm({
                   <h3 className="text-lg font-medium">
                     Call-to-Action Buttons
                   </h3>
+
                   <Button
                     disabled={fields.length >= 2}
                     type="button"
@@ -244,88 +276,155 @@ function HeroForm({
                   </Button>
                 </div>
 
-                {fields.map((field, index) => (
-                  <Card key={field.id} className="p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {fields.map((field, index) => {
+                  return (
+                    <Card key={field.id} className="p-4">
                       <FormField
                         control={form.control}
-                        name={`cta.${index}.text`}
+                        name={`cta.${index}.type`}
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Button Text</FormLabel>
+                          <FormItem className="space-y-3">
                             <FormControl>
-                              <Input
-                                placeholder="e.g., Book Appointment"
-                                {...field}
-                              />
+                              <RadioGroup
+                                onValueChange={(val) => {
+                                  field.onChange(val);
+                                  form.setValue(`cta.${index}.link`, "");
+                                }}
+                                defaultValue={field.value}
+                                className="flex gap-3"
+                              >
+                                <FormItem className="flex items-center gap-3">
+                                  <FormControl>
+                                    <RadioGroupItem value="internal" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    Internal
+                                  </FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center gap-3">
+                                  <FormControl>
+                                    <RadioGroupItem value="external" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    External
+                                  </FormLabel>
+                                </FormItem>
+                              </RadioGroup>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-
-                      <FormField
-                        control={form.control}
-                        name={`cta.${index}.link`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Button Link</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="e.g., /appointment"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="flex items-end gap-2">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <FormField
                           control={form.control}
-                          name={`cta.${index}.variant`}
+                          name={`cta.${index}.text`}
                           render={({ field }) => (
-                            <FormItem className="flex-1">
-                              <FormLabel>Style</FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select style" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="primary">
-                                    Primary
-                                  </SelectItem>
-                                  <SelectItem value="secondary">
-                                    Secondary
-                                  </SelectItem>
-                                  <SelectItem value="outline">
-                                    Outline
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
+                            <FormItem>
+                              <FormLabel>Button Text</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="e.g., Book Appointment"
+                                  {...field}
+                                />
+                              </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeCTA(index)}
-                          className="mb-2"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+
+                        <FormField
+                          control={form.control}
+                          name={`cta.${index}.link`}
+                          render={({ field: formField }) => {
+                            const linkType = form.watch("cta")[index].type;
+
+                            return (
+                              <FormItem>
+                                <FormLabel>
+                                  {linkType === "internal"
+                                    ? "Navigate to"
+                                    : "Link "}
+                                </FormLabel>
+                                <FormControl>
+                                  {linkType === "internal" ? (
+                                    <Select
+                                      onValueChange={formField.onChange}
+                                      defaultValue={formField.value}
+                                      {...formField}
+                                    >
+                                      <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select link" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {Object.entries(EInternalLink).map(
+                                          ([key, value]) => (
+                                            <SelectItem value={value} key={key}>
+                                              {key}
+                                            </SelectItem>
+                                          )
+                                        )}
+                                      </SelectContent>
+                                    </Select>
+                                  ) : (
+                                    <Input
+                                      placeholder="e.g., /appointment"
+                                      {...formField}
+                                    />
+                                  )}
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            );
+                          }}
+                        />
+
+                        <div className="flex items-end gap-2">
+                          <FormField
+                            control={form.control}
+                            name={`cta.${index}.variant`}
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormLabel>Style</FormLabel>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger className="w-full">
+                                      <SelectValue placeholder="Select style" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="primary">
+                                      Primary
+                                    </SelectItem>
+                                    <SelectItem value="secondary">
+                                      Secondary
+                                    </SelectItem>
+                                    <SelectItem value="outline">
+                                      Outline
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeCTA(index)}
+                            className="mb-1"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                ))}
+                    </Card>
+                  );
+                })}
               </div>
 
               {/* Image Section */}

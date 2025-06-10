@@ -121,6 +121,7 @@ export function FAQForm({
                 <TiptapEditor
                   content={form.getValues("description") || ""}
                   onChange={handleAnswerChange}
+                  className="max-h-[150px] overflow-y-scroll "
                   placeholder="Enter the answer..."
                 />
               </FormControl>

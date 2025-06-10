@@ -95,7 +95,6 @@ const CompanyInfoForm = () => {
       </div>
     );
   }
-  console.log(form.formState.errors.email);
   return (
     <Form {...form}>
       <form

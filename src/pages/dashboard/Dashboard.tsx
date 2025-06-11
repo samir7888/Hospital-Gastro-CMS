@@ -17,7 +17,7 @@ export default function DashboardPage() {
         <div className="flex gap-2">
           <Button asChild variant="outline">
             <Link
-              to="https://hospital-project-mfls.vercel.app/"
+              to="https://hospital-project-peach.vercel.app/"
               target="_blank"
             >
               Visit Website

@@ -39,9 +39,9 @@ const useAxiosAuth = () => {
             { withCredentials: true }
           );
           if (setAccessToken) {
-            setAccessToken(res.data.accessToken); // Update token in context
+            setAccessToken(res.data.access_token); // Update token in context
           }
-          originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${res.data.access_token}`;
           return axiosInstance(originalRequest); // Retry failed request
         } catch (refreshError) {
           console.error("Session expired, logging out...");

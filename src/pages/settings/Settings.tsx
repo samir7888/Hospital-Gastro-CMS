@@ -33,15 +33,7 @@ const formSchema = z.object({
     .string()
     .min(3, "Company name must be between 3 and 50 characters")
     .max(50, "Company name must be between 3 and 50 characters"),
-  siteTitle: z
-    .string()
-    .min(3, "Site title must be between 3 and 50 characters")
-    .max(50, "Site title must be between 3 and 50 characters"),
-  siteDescription: z
-    .string()
-    .min(50, "Site description must be between 50 and 200 characters")
-    .max(200, "Site description must be between 50 and 200 characters")
-    .optional(),
+ 
   footerDescription: z
     .string()
     .min(50, "Footer description must be between 50 and 200 characters")
@@ -71,8 +63,6 @@ export default function SettingsPage({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues || {
       companyName: "",
-      siteTitle: "",
-      siteDescription: "",
       footerDescription: "",
       logoId: "",
     },
@@ -136,50 +126,7 @@ export default function SettingsPage({
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="siteTitle"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Site Title</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Hospital Website Title"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          This appears in the browser tab and search results
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="siteDescription"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Site Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                          className="resize-none field-sizing-content"
-                            rows={3}
-                            placeholder="Hospital Website Description"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                        <FormDescription>
-                          Your hospital's website description
-                          <span className="block mt-1 text-right text-xs text-muted-foreground">
-                            {field.value?.length || 0}/200 characters
-                          </span>
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
+                 
 
                   <FormField
                     control={form.control}

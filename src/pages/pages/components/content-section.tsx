@@ -37,14 +37,25 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 // Schema for hero section
 const heroSectionSchema = z
   .object({
-    title: z.string().min(3, "Title must be between 3 and 50 characters").max(50, "Title must be between 3 and 50 characters"),
-    subtitle: z.string().min(10, "Subtitle must be between 10 and 200 characters").max(200, "Subtitle must be between 10 and 200 characters"),
+    title: z
+      .string()
+      .min(3, "Title must be between 3 and 50 characters")
+      .max(50, "Title must be between 3 and 50 characters"),
+    subtitle: z
+      .string()
+      .min(10, "Subtitle must be between 10 and 200 characters")
+      .max(200, "Subtitle must be between 10 and 200 characters"),
     imageId: imageSchema,
     cta: z
       .array(
         z.object({
           link: z.string().min(1, "Link is required"),
-          text: z.string().min(3, "Text must be between 3 and 15 characters").max(15, "Text must be between 3 and 15 characters"),
+          text: z
+            .string()
+            .min(3, "Text must be between 3 and 15 characters")
+            .max(15, "Text must be between 3 and 15 characters")
+            .trim(),
+
           variant: z.enum(["primary", "secondary", "outline"]),
           type: z.enum(["external", "internal"]),
         })
@@ -52,7 +63,8 @@ const heroSectionSchema = z
       .max(2, { message: "At most 2 CTAs are allowed" }),
   })
   .superRefine((data, ctx) => {
-    data.cta.forEach((cta, index) => {``
+    data.cta.forEach((cta, index) => {
+      ``;
       const parsedLink = z.string().url().safeParse(cta.link);
 
       if (cta.type === "external" && !parsedLink.success) {
@@ -326,6 +338,9 @@ function HeroForm({
                                 <Input
                                   placeholder="e.g., Book Appointment"
                                   {...field}
+                                  onChange={(e) =>
+                                    field.onChange(e.target.value.trimStart())
+                                  }
                                 />
                               </FormControl>
                               <FormMessage />

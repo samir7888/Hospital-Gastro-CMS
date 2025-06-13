@@ -72,6 +72,18 @@ export const useAppMutation = ({
               } else {
                 toast.error(msgItem.message);
               }
+            } else if ("field" in message) {
+              if (form) {
+                form?.setError(message.field, {
+                  type: "manual",
+                  message: message.message,
+                });
+                form?.setFocus(message.field);
+              } else {
+                toast.error(message.message);
+              }
+            } else if (typeof msg === "string") {
+              toast.error(msg);
             }
           } else if (typeof message === "string") {
             toast.error(message);

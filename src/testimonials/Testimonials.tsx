@@ -139,7 +139,7 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
           </Avatar>
           <div className="flex-1">
             <h3 className="font-medium text-lg">{testimonial.personName}</h3>
-            <div className="flex items-center gap-2 mt-1 mb-4">
+            <div className="flex flex-col items-start gap-2 mt-1 mb-4">
               {/* Updated to use the new StarRating component */}
               <StarRating rating={testimonial.personRating} />
               <span className="text-sm text-muted-foreground">
@@ -188,7 +188,7 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </CardContent>
+      </CardContent>  
     </Card>
   );
 }

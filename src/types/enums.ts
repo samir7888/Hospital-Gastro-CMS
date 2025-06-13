@@ -72,5 +72,5 @@ export enum EInternalLink {
   Services = "/services",
   Doctors = "/doctors",
   News = "/news",
-  Appointments = "/#appointments",
+  Appointments = "/#appointment",
 }

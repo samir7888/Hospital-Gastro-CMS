@@ -1,4 +1,3 @@
-import { Plus } from "lucide-react";
 import { useAppMutation } from "@/utils/react-query";
 
 import z from "zod";
@@ -8,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import CategoryList from "./CategoryList";
 
-const createCategorySchema = z.object({
+export const createCategorySchema = z.object({
   name: z
     .string({ required_error: "Name is required" })
     .min(3, { message: "Name must be between 3 and 50 characters" })
@@ -16,7 +15,7 @@ const createCategorySchema = z.object({
     .trim(),
 });
 
-type CreateCategorySchemaType = z.infer<typeof createCategorySchema>;
+export type CreateCategorySchemaType = z.infer<typeof createCategorySchema>;
 
 const CategoryPage = () => {
   const form = useForm<CreateCategorySchemaType>({
@@ -24,14 +23,14 @@ const CategoryPage = () => {
     defaultValues: { name: "" },
   });
 
-  const { mutate: createCategory } = useAppMutation({
+  const { mutateAsync: createCategory } = useAppMutation({
     type: "post",
     url: "/blog-categories",
-   
   });
 
-  const handleCreateCategory = form.handleSubmit((data) => {
-    createCategory({ data });
+  const handleCreateCategory = form.handleSubmit(async (data) => {
+    await createCategory({ data });
+    form.setValue("name", "");
   });
 
   return (
@@ -47,15 +46,9 @@ const CategoryPage = () => {
 
       <div className="grid grid-cols-1 gap-8">
         <div className="lg:col-span-1 bg-gray-50 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Categories</h2>
-            <button
-              onClick={() => form.setValue("name", "")}
-              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              <Plus className="w-4 h-4" /> Add
-            </button>
-          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Categories
+          </h2>
 
           <form onSubmit={handleCreateCategory} className="mb-4 space-y-2">
             <input
@@ -69,9 +62,9 @@ const CategoryPage = () => {
               </p>
             )}
 
-            <CategoryList />
             <Button type="submit">Save</Button>
           </form>
+          <CategoryList />
         </div>
       </div>
     </div>

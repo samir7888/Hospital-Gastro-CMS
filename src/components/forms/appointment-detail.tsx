@@ -95,12 +95,6 @@ export default function AppointmentDetailsPage({
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border p-6">
-        <div className="flex justify-between items-start mb-6">
-          <h1 className="text-2xl font-bold">
-            Appointment #{appointment.firstName}
-          </h1>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <h2 className="text-lg font-semibold mb-4 pb-2 border-b">
@@ -151,27 +145,6 @@ export default function AppointmentDetailsPage({
                 </div>
               </div>
             </div>
-
-            {/* {appointment.medicalHistory.length > 0 && (
-              <div className="mt-8">
-                <h2 className="text-lg font-semibold mb-4 pb-2 border-b">
-                  Medical History
-                </h2>
-                <div className="space-y-4">
-                  {appointment.medicalHistory.map((item, index) => (
-                    <div key={index} className="bg-gray-50 p-3 rounded">
-                      <div className="flex justify-between">
-                        <span className="text-sm font-medium">{item.type}</span>
-                        <span className="text-sm text-gray-500">
-                          {item.date}
-                        </span>
-                      </div>
-                      <p className="text-sm mt-1">{item.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )} */}
           </div>
 
           <div>
@@ -179,26 +152,6 @@ export default function AppointmentDetailsPage({
               Appointment Details
             </h2>
             <div className="space-y-4">
-              {/* associated doctors */}
-
-              {/* <div className="flex items-start gap-3">
-                <div className="bg-green-100 p-2 rounded-full">
-                  <Users className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Doctor</p>
-                  <div>
-                    <p className="font-medium">{appointment.doctorName}</p>
-                    <Link
-                      to={`/doctors/${appointment.doctorId}`}
-                      className="text-sm text-blue-600 hover:underline"
-                    >
-                      View Doctor Profile
-                    </Link>
-                  </div>
-                </div>
-              </div> */}
-
               <div className="flex items-start gap-3">
                 <div className="bg-green-100 p-2 rounded-full">
                   <FileText className="h-5 w-5 text-green-600" />

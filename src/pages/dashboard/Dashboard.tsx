@@ -14,19 +14,11 @@ export default function DashboardPage() {
             Manage and update your hospital website content
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button asChild variant="outline">
-            <Link
-              to="https://hospital-project-peach.vercel.app/"
-              target="_blank"
-            >
-              Visit Website
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link to="/title">Edit Content</Link>
-          </Button>
-        </div>
+        <Button asChild variant="outline">
+          <Link to="https://hospital-project-peach.vercel.app/" target="_blank">
+            Visit Website
+          </Link>
+        </Button>
       </div>
 
       <DashboardStats />

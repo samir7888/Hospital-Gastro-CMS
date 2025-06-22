@@ -1,11 +1,10 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Plus, Edit, Trash2, Calendar, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -24,6 +23,7 @@ import type {
   NewsAndEventsResponse,
 } from "@/schema/news-type";
 import CategoryTabs from "@/components/helpers/category-tabs";
+import { useState } from "react";
 
 export default function NewsAndEventsPage() {
   return (
@@ -99,14 +99,17 @@ function NewsGrid() {
 }
 
 function NewsCard({ blogs }: { blogs: BaseNewsAndEvents }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const { mutateAsync: deleteNews, isPending: isDeleting } = useAppMutation({
     type: "delete",
     url: `/blogs/${blogs.slug}`,
     queryKey: ["blogs"],
   });
 
-  const handleDeleteConfirm = () => {
-    deleteNews({});
+  const handleDeleteConfirm = async () => {
+    await deleteNews({});
+    setIsOpen(false);
   };
 
   return (
@@ -130,7 +133,7 @@ function NewsCard({ blogs }: { blogs: BaseNewsAndEvents }) {
                 Edit
               </Link>
             </Button>
-            <AlertDialog>
+            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
               <AlertDialogTrigger asChild>
                 <Button
                   size="sm"
@@ -150,16 +153,16 @@ function NewsCard({ blogs }: { blogs: BaseNewsAndEvents }) {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel >
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <Button
+                    type="button"
+                    variant={"destructive"}
                     onClick={handleDeleteConfirm}
                     disabled={isDeleting}
-                    className="bg-red-500 hover:bg-red-600"
+                    className={buttonVariants({ variant: "destructive" })}
                   >
                     {isDeleting ? "Deleting..." : "Delete"}
-                  </AlertDialogAction>
+                  </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>

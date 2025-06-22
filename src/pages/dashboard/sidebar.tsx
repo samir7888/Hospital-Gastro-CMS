@@ -70,6 +70,11 @@ export function Sidebar({ open }: SidebarProps) {
       icon: <Users className="h-5 w-5" />,
     },
     {
+      title: "Staffs",
+      to: "/staffs",
+      icon: <Users className="h-5 w-5" />,
+    },
+    {
       title: "News & Events",
       to: "/news",
       icon: <Calendar className="h-5 w-5" />,

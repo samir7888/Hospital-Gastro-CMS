@@ -33,13 +33,14 @@ const formSchema = z.object({
     .string()
     .min(3, "Company name must be between 3 and 50 characters")
     .max(50, "Company name must be between 3 and 50 characters"),
- 
+
   footerDescription: z
     .string()
     .min(50, "Footer description must be between 50 and 200 characters")
     .max(200, "Footer description must be between 50 and 200 characters")
     .optional(),
-  logoId: imageSchema,
+  primaryLogoId: imageSchema,
+  secondaryLogoId: imageSchema,
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -48,30 +49,28 @@ export default function SettingsPage({
   defaultValues,
   uploadedImage,
 }: {
-  defaultValues?: {
-    companyName: string;
-    siteTitle: string;
-    siteDescription: string;
-    privacyPolicy: string;
-    termsAndConditions: string;
-    logoId: string | null;
-    footerDescription: string;
+  defaultValues?: Partial<FormValues> & {
+    privacyPolicy?: string;
+    termsAndConditions?: string;  
   };
-  uploadedImage?: ImageResponse | null;
+  uploadedImage?: {
+    primaryLogo: ImageResponse | null;
+    secondaryLogo: ImageResponse | null;
+  };
 }) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues || {
       companyName: "",
       footerDescription: "",
-      logoId: "",
+      primaryLogoId: null,
+      secondaryLogoId: null,
     },
   });
 
   const updateSettingsMutation = useAppMutation({
     url: "general-setting",
     type: "patch",
-   
   });
 
   function onSubmit(data: FormValues) {
@@ -126,8 +125,6 @@ export default function SettingsPage({
                     )}
                   />
 
-                 
-
                   <FormField
                     control={form.control}
                     name="footerDescription"
@@ -159,20 +156,52 @@ export default function SettingsPage({
                 <CardHeader>
                   <CardTitle>Logo & Branding</CardTitle>
                   <CardDescription>
-                    Upload your hospital logo and configure visual branding
+                    Upload your Primary hospital logo
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <FormField
                     control={form.control}
-                    name="logoId"
+                    name="primaryLogoId"
                     render={() => (
                       <FormItem>
                         <FormLabel>Hospital Logo</FormLabel>
                         <FormControl>
                           <FileUpload
-                            name="logoId"
-                            currentImage={uploadedImage}
+                            name="primaryLogoId"
+                            currentImage={uploadedImage?.primaryLogo}
+                            className="w-full"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Upload your hospital logo. Recommended size:
+                          512x512px. Max file size: 5MB. Supported formats: JPG,
+                          PNG, SVG.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Logo & Branding</CardTitle>
+                  <CardDescription>
+                    Upload your secondary hospital logo for footer
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="secondaryLogoId"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel>Hospital Logo</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            name="secondaryLogoId"
+                            currentImage={uploadedImage?.secondaryLogo}
                             className="w-full"
                           />
                         </FormControl>

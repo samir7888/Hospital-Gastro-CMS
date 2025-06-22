@@ -1,9 +1,19 @@
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { FeatureResponse } from "@/schema/feature-schema";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import { Edit, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function FeaturesPage() {
@@ -12,7 +22,9 @@ export default function FeaturesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Features</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Features
+          </h1>
           <p className="text-sm md:text-base text-muted-foreground">
             Manage why to choose your hospital and what features you offer
           </p>
@@ -30,6 +42,7 @@ export default function FeaturesPage() {
 }
 
 function FeaturesGrid() {
+  const [isOpen, setIsOpen] = useState(false);
   const {
     data: features,
     isLoading,
@@ -48,6 +61,7 @@ function FeaturesGrid() {
 
   const handleDelete = async (featureID: string) => {
     await deleteFeature({ id: featureID });
+    setIsOpen(false);
   };
 
   if (isLoading) {
@@ -82,12 +96,10 @@ function FeaturesGrid() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
       {features.map((feature, index) => (
-        <Card 
-          key={feature.id || index} 
+        <Card
+          key={feature.id || index}
           className="group overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 relative"
         >
-         
-
           <CardContent className="p-0 h-full">
             <div className="h-full flex flex-col">
               {/* Feature Image */}
@@ -115,14 +127,16 @@ function FeaturesGrid() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/features/${feature.id}`,{state:feature})}
+                    onClick={() =>
+                      navigate(`/features/${feature.id}`, { state: feature })
+                    }
                     className="flex items-center gap-1 text-xs"
                   >
                     <Edit className="h-3 w-3" />
                     Edit
                   </Button>
 
-                  <AlertDialog>
+                  <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="outline"
@@ -138,18 +152,21 @@ function FeaturesGrid() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete Feature</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to delete "{feature.title}"? This
-                          action cannot be undone.
+                          Are you sure you want to delete "{feature.title}"?
+                          This action cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
+                        <Button
+                          type="button"
+                          variant={"destructive"}
                           onClick={() => handleDelete(feature.id)}
-                          className="bg-destructive  hover:bg-destructive/90"
+                          disabled={isDeleting}
+                          className={buttonVariants({ variant: "destructive" })}
                         >
-                          Delete
-                        </AlertDialogAction>
+                          {isDeleting ? "Deleting..." : "Delete"}
+                        </Button>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
@@ -169,9 +186,12 @@ function NoFeatures() {
       <div className="space-y-4">
         <div className="text-4xl md:text-6xl opacity-20">🏥</div>
         <div className="space-y-2">
-          <h3 className="text-lg md:text-xl font-medium text-gray-900">No features found</h3>
+          <h3 className="text-lg md:text-xl font-medium text-gray-900">
+            No features found
+          </h3>
           <p className="text-sm md:text-base text-muted-foreground max-w-md">
-            Add some features to showcase what makes your hospital unique and attract more patients.
+            Add some features to showcase what makes your hospital unique and
+            attract more patients.
           </p>
         </div>
         <Button asChild className="mt-4">

@@ -1,21 +1,33 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type { FaqItem } from "@/schema/faqs";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useDeleteFAQ } from "./hooks/useFAQ";
 
 interface FAQItemProps {
   faq: FaqItem;
   onEdit: (faq: FaqItem) => void;
-  onDelete: (id: string) => void;
 }
 
-export function FAQCategory({ faq, onEdit, onDelete }: FAQItemProps) {
-  
+export function FAQCategory({ faq, onEdit }: FAQItemProps) {
+  const { mutateAsync, isPending } = useDeleteFAQ();
+  async function handleDelete(id: string) {
+    await mutateAsync({ id });
+    setIsOpen(false);
+  }
 
-  const [deleteDialogId, setDeleteDialogId] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="border rounded-md overflow-hidden">
       <div className="flex items-center justify-between p-3 bg-muted">
@@ -24,47 +36,41 @@ export function FAQCategory({ faq, onEdit, onDelete }: FAQItemProps) {
           <Button variant="ghost" size="sm" onClick={() => onEdit(faq)}>
             Edit
           </Button>
-          <Dialog
-                  open={deleteDialogId === faq.id}
-                  onOpenChange={(open) => !open && setDeleteDialogId(null)}
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(true);
+                }}
+                className="p-1 hover:text-red-600"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete FAQ</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this FAQ?
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="ghost" onClick={() => setIsOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  disabled={isPending}
+                  variant="destructive"
+                  onClick={() => {
+                    handleDelete(faq.id);
+                  }}
                 >
-                  <DialogTrigger asChild>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDeleteDialogId(faq.id);
-                      }}
-                      className="p-1 hover:text-red-600"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Delete FAQ</DialogTitle>
-                      <DialogDescription>
-                        Are you sure you want to delete this FAQ?
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                      <Button
-                        variant="ghost"
-                        onClick={() => setDeleteDialogId(null)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => {
-                          onDelete(faq.id);
-                          setDeleteDialogId(null);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                  {isPending ? "Deleting..." : "Delete"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <div
@@ -73,7 +79,6 @@ export function FAQCategory({ faq, onEdit, onDelete }: FAQItemProps) {
       />
     </div>
   );
-
 }
 
-//  
+//

@@ -4,23 +4,19 @@ import { EFaqType } from "@/types/enums";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { FaqItem } from "@/schema/faqs";
-import { useDeleteFAQ, useFAQs } from "./hooks/useFAQ";
+import {  useFAQs } from "./hooks/useFAQ";
 import { FAQCategory } from "./FAQCategory";
 import PaginationComponent from "@/components/pagination/pagination";
 
 interface FAQListProps {
   onEdit: (faq: FaqItem) => void;
-
 }
 
 export function FAQList({ onEdit }: FAQListProps) {
-  const { data: response, isLoading, error } = useFAQs();
-  const deleteFAQ = useDeleteFAQ();
+  const { data: response, isLoading, error, } = useFAQs();
+  console.log(isLoading, response, error);
 
-  function handleDelete(id: string) {
-   
-      deleteFAQ.mutate({ id });
-  }
+ 
 
   if (isLoading) {
     return (
@@ -48,7 +44,9 @@ export function FAQList({ onEdit }: FAQListProps) {
   if (!response || !response.data || response.data.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">No FAQs found. Add your first FAQ to get started.</p>
+        <p className="text-muted-foreground">
+          No FAQs found. Add your first FAQ to get started.
+        </p>
       </div>
     );
   }
@@ -66,7 +64,6 @@ export function FAQList({ onEdit }: FAQListProps) {
               key={faq.id}
               faq={faq}
               onEdit={onEdit}
-              onDelete={handleDelete}
             />
           ));
         })}

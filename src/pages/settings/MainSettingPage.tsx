@@ -7,7 +7,9 @@ interface GeneralSettingsResponse {
   companyName: string;
   siteTitle: string;
   siteDescription: string;
-  logo: ImageResponse | null;
+  primaryLogo: ImageResponse | null;
+  secondaryLogo: ImageResponse | null;
+
 }
 
 interface PrivacyPolicyResponse {
@@ -92,14 +94,16 @@ const MainSettingPage = () => {
     <SettingsPage
       defaultValues={{
         companyName: generalSettings?.companyName || "",
-        siteTitle: generalSettings?.siteTitle || "",
-        siteDescription: generalSettings?.siteDescription || "",
         privacyPolicy: privacyPolicy?.privacyPolicy || "",
         termsAndConditions: termsConditions?.termsAndConditions || "",
-        logoId: generalSettings?.logo?.id || null,
+        primaryLogoId: generalSettings?.primaryLogo?.id || null,
+        secondaryLogoId: generalSettings?.secondaryLogo?.id || null,
         footerDescription: footerDescription?.footerDescription || "",
       }}
-      uploadedImage={generalSettings?.logo}
+      uploadedImage={{
+        primaryLogo: generalSettings?.primaryLogo || null,
+        secondaryLogo: generalSettings?.secondaryLogo || null,
+      }}
     />
   );
 };

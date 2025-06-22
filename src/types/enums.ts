@@ -1,4 +1,3 @@
-
 export interface AuthUser {
   name: string;
   email: string;
@@ -26,6 +25,10 @@ export enum ESpecialization {
   Dermatology = "dermatology",
   Ophthalmology = "ophthalmology",
   Orthodontics = "orthodontics",
+  Gastroenterology = "gastroenterology",
+  Hepatology = "hepatology",
+  Radiologist = "radiologist",
+  Rehumatologist = "rehumatologist",
 }
 
 export enum EWeekDays {
@@ -57,8 +60,6 @@ export enum EFaqType {
   Facility = "facility",
   EmergencyCare = "emergency_care",
 }
-
-
 
 export enum EButtonVariant {
   Primary = "primary",

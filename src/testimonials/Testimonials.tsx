@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Plus, Edit, Trash2, Star, Quote, MessageSquare } from "lucide-react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -112,6 +111,7 @@ function TestimonialsGrid() {
 }
 
 function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
+  const [isOpen, setIsOpen] = useState(false);
   const { mutateAsync: deleteTestimonial, isPending: isDeleting } =
     useAppMutation({
       type: "delete",
@@ -119,8 +119,9 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
       queryKey: ["testimonials"],
     });
 
-  const handleDeleteConfirm = () => {
-    deleteTestimonial({});
+  const handleDeleteConfirm = async() => {
+     await deleteTestimonial({});
+     setIsOpen(false);
   };
 
   return (
@@ -157,7 +158,7 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
               <Edit className="h-4 w-4" />
             </Link>
           </Button>
-          <AlertDialog>
+          <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger asChild>
               <Button
                 variant="ghost"
@@ -177,13 +178,15 @@ function TestimonialCard({ testimonial }: { testimonial: ITestimonial }) {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDeleteConfirm}
-                  disabled={isDeleting}
-                  className="bg-red-500 hover:bg-red-600"
-                >
-                  {isDeleting ? "Deleting..." : "Delete"}
-                </AlertDialogAction>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={handleDeleteConfirm}
+                    disabled={isDeleting}
+                    className="bg-red-500 hover:bg-red-600 text-white"
+                  >
+                    {isDeleting ? "Deleting..." : "Delete"}
+                  </Button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

@@ -7,10 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -26,6 +25,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import PaginationComponent from "@/components/pagination/pagination";
 import SearchInput from "@/components/helpers/search-input";
+import { useState } from "react";
 
 export default function ServicesListPage() {
   const navigate = useNavigate();
@@ -146,12 +146,14 @@ interface ServiceCardProps {
 }
 
 function ServiceCard({ service }: ServiceCardProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const { mutate: deleteService, isPending: isDeleting } = useAppMutation({
     type: "delete",
     url: "/services",
   });
-  const handleDelete = (serviceId: string) => {
-    deleteService({ id: serviceId });
+  const handleDelete =async (serviceId: string) => {
+    await deleteService({ id: serviceId });
+    setIsOpen(false);
   };
   const navigate = useNavigate();
 
@@ -207,7 +209,7 @@ function ServiceCard({ service }: ServiceCardProps) {
             Edit
           </Button>
 
-          <AlertDialog>
+          <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger asChild>
               <Button
                 variant="outline"
@@ -229,12 +231,15 @@ function ServiceCard({ service }: ServiceCardProps) {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => handleDelete(service.id)}
-                  className="bg-destructive  hover:bg-destructive/90"
-                >
-                  Delete
-                </AlertDialogAction>
+                <Button
+                    type="button"
+                    variant={"destructive"}
+                    onClick={() => handleDelete(service.id)}
+                    disabled={isDeleting}
+                    className={buttonVariants({ variant: "destructive" })}
+                  >
+                    {isDeleting ? "Deleting..." : "Delete"}
+                  </Button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

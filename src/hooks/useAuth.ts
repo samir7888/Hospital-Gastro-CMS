@@ -13,15 +13,6 @@ const useAxiosAuth = () => {
     },
   });
 
-  // axiosInstance.interceptors.request.use(
-  //   (config) => {
-  //     if (accessToken) {
-  //       config.headers.Authorization = `Bearer ${accessToken}`;
-  //     }
-  //     return config;
-  //   },
-  //   (error) => Promise.reject(error)
-  // );
 
   axiosInstance.interceptors.response.use(
     (response) => response,

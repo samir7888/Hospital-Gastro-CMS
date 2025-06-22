@@ -18,7 +18,7 @@ import type {
   AppointmentResponse,
 } from "@/schema/appointment-schema";
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import PaginationComponent from "@/components/pagination/pagination";
 import SearchInput from "@/components/helpers/search-input";
 
@@ -73,7 +73,8 @@ function AppointmentsTable() {
 }
 
 function AppointmentList({ appointment }: { appointment: Appointment }) {
-  const [deleteDialogId, setDeleteDialogId] = useState<string | null>(null);
+  // const [deleteDialogId, setDeleteDialogId] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { mutateAsync: deleteDoctor, isPending: isDeleting } = useAppMutation({
     type: "delete",
@@ -81,8 +82,9 @@ function AppointmentList({ appointment }: { appointment: Appointment }) {
     queryKey: ["appointments"],
   });
 
-  const handleDelete = (id: string) => {
-    deleteDoctor({ id });
+  const handleDelete = async (id: string) => {
+    await deleteDoctor({ id });
+    setIsOpen(false);
   };
   return (
     <tr key={appointment.id} className="hover:bg-gray-50">
@@ -134,16 +136,13 @@ function AppointmentList({ appointment }: { appointment: Appointment }) {
           >
             <Eye className="h-5 w-5" />
           </Link>
-          <Dialog
-            open={deleteDialogId === appointment.id}
-            onOpenChange={(open) => !open && setDeleteDialogId(null)}
-          >
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <button
                 disabled={isDeleting}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setDeleteDialogId(appointment.id);
+                  setIsOpen(true);
                 }}
                 className="p-1 text-red-600 hover:bg-red-100 rounded"
               >
@@ -158,17 +157,15 @@ function AppointmentList({ appointment }: { appointment: Appointment }) {
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="ghost" onClick={() => setDeleteDialogId(null)}>
-                  Cancel
-                </Button>
+                <Button onClick={() => setIsOpen(false)}>Cancel</Button>
                 <Button
-                  variant="destructive"
-                  onClick={() => {
-                    handleDelete(appointment.id);
-                    setDeleteDialogId(null);
-                  }}
+                  type="button"
+                  variant={"destructive"}
+                  onClick={() => handleDelete(appointment.id)}
+                  disabled={isDeleting}
+                  className={buttonVariants({ variant: "destructive" })}
                 >
-                  Delete
+                  {isDeleting ? "Deleting..." : "Delete"}
                 </Button>
               </DialogFooter>
             </DialogContent>

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -21,7 +22,6 @@ import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import type { Doctor, DoctorsResponse } from "@/schema/Doctors";
 import SearchInput from "@/components/helpers/search-input";
 import PaginationComponent from "@/components/pagination/pagination";
-import {  useState } from "react";
 
 export default function DoctorsPage() {
   return (
@@ -66,6 +66,7 @@ function DoctorsGrid() {
   }
   if (doctors?.data.length === 0) {
     return <NoDoctors />;
+    
   }
 
   return (
@@ -87,17 +88,16 @@ function DoctorsGrid() {
 }
 
 function DoctorCard({ doctor }: { doctor: Doctor }) {
-  const [isOpen, setIsOpen] = useState(false);
 
-  const { mutateAsync: deleteDoctor, isPending: isDeleting } = useAppMutation({
+  const { mutateAsync: deleteDoctor, isPending: isDeleting,} = useAppMutation({
     type: "delete",
     url: `/doctors/${doctor.id}`,
     queryKey: ["doctors"],
+   
   });
 
-  const handleDeleteConfirm = async () => {
-    await deleteDoctor({});
-    setIsOpen(false);
+  const handleDeleteConfirm = () => {
+    deleteDoctor({});
   };
 
   return (
@@ -116,13 +116,9 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
                 Edit
               </Link>
             </Button>
-            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+            <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => setIsOpen(true)}
-                >
+                <Button size="sm" variant="destructive">
                   <Trash2 className="h-3.5 w-3.5 mr-1" />
                   Delete
                 </Button>
@@ -137,15 +133,13 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <Button
-                    type="button"
-                    variant={"destructive"}
-                    onClick={handleDeleteConfirm}
+                  <AlertDialogAction
+                    onClick={() => handleDeleteConfirm()}
                     disabled={isDeleting}
                     className={buttonVariants({ variant: "destructive" })}
                   >
                     {isDeleting ? "Deleting..." : "Delete"}
-                  </Button>
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>

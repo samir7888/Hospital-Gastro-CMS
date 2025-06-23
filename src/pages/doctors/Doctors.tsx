@@ -21,7 +21,7 @@ import { useAppMutation, useAppQuery } from "@/utils/react-query";
 import type { Doctor, DoctorsResponse } from "@/schema/Doctors";
 import SearchInput from "@/components/helpers/search-input";
 import PaginationComponent from "@/components/pagination/pagination";
-import {  useState } from "react";
+import { useState } from "react";
 
 export default function DoctorsPage() {
   return (

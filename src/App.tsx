@@ -4,6 +4,7 @@ import type { ReactNode, ComponentType } from "react";
 import { AuthProvider } from "./context/auth-context";
 import { AuthGuard } from "./components/auth/auth-guard";
 import PersistentRefreshToken from "./components/PersistantRefreshToken";
+// import SingleStaffPage from "./pages/staffs/SingleStaffPage";
 
 // TypeScript interfaces
 interface ErrorBoundaryState {
@@ -128,6 +129,9 @@ const HeroPage = lazy(() => import("./pages/pages/page"));
 // Doctor related pages
 const Doctors = lazy(() => import("./pages/doctors/Doctors"));
 const SingleDoctorPage = lazy(() => import("./pages/doctors/SingleDoctorPage"));
+// Doctor related pages
+const Staffs = lazy(() => import("./pages/staffs/Staffs"));
+const SingleStaffPage = lazy(() => import("./pages/staffs/SingleStaffPage"));
 
 // Appointment related pages
 const Appointments = lazy(() => import("./pages/appointments/Appointments"));
@@ -205,6 +209,9 @@ const LazyHeroPage = withLazyLoading(HeroPage);
 const LazyDoctors = withLazyLoading(Doctors);
 const LazySingleDoctorPage = withLazyLoading(SingleDoctorPage, <FormLoader />);
 
+const LazyStaffs = withLazyLoading(Staffs);
+const LazySingleStaffPage = withLazyLoading(SingleStaffPage, <FormLoader />);
+
 const LazyAppointments = withLazyLoading(Appointments);
 const LazyAppointment = withLazyLoading(Appointment, <FormLoader />);
 
@@ -269,6 +276,11 @@ const App: React.FC = () => {
             <Route path="/doctors" element={<LazyDoctors />} />
             <Route path="/doctors/new" element={<LazySingleDoctorPage />} />
             <Route path="/doctors/:id" element={<LazySingleDoctorPage />} />
+
+            {/* Staff Routes */}
+            <Route path="/staffs" element={<LazyStaffs />} />
+            <Route path="/staffs/new" element={<LazySingleStaffPage />} />
+            <Route path="/staffs/:id" element={<LazySingleStaffPage />} />
 
             {/* Appointment Routes */}
             <Route path="/appointments" element={<LazyAppointments />} />

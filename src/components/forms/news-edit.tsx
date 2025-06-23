@@ -59,7 +59,7 @@ export default function NewsEventEditPage({
   });
 
   async function onSubmit(data: NewsEventFormSchemaValues) {
-   await createBlog({ data });
+    await createBlog({ data });
     navigate("/news");
   }
 
@@ -115,7 +115,7 @@ export default function NewsEventEditPage({
                             {...field}
                           />
                         </FormControl>
-                         <FormDescription>
+                        <FormDescription>
                           Your summary is a brief description of your blog
                           <span className="block mt-1 text-right text-xs text-muted-foreground">
                             {field.value?.length || 0}/200 characters
@@ -144,7 +144,7 @@ export default function NewsEventEditPage({
                   <FormField
                     control={form.control}
                     name="content"
-                    render={({field}) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <TiptapEditor
@@ -155,7 +155,7 @@ export default function NewsEventEditPage({
                           />
                         </FormControl>
                         <FormMessage />
-                         <FormDescription>
+                        <FormDescription>
                           This text appears in the website footer
                           <span className="block mt-1 text-right text-xs text-muted-foreground">
                             {field.value?.length || 0}/10000 characters

@@ -151,7 +151,7 @@ function ServiceCard({ service }: ServiceCardProps) {
     type: "delete",
     url: "/services",
   });
-  const handleDelete =async (serviceId: string) => {
+  const handleDelete = async (serviceId: string) => {
     await deleteService({ id: serviceId });
     setIsOpen(false);
   };
@@ -232,14 +232,14 @@ function ServiceCard({ service }: ServiceCardProps) {
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <Button
-                    type="button"
-                    variant={"destructive"}
-                    onClick={() => handleDelete(service.id)}
-                    disabled={isDeleting}
-                    className={buttonVariants({ variant: "destructive" })}
-                  >
-                    {isDeleting ? "Deleting..." : "Delete"}
-                  </Button>
+                  type="button"
+                  variant={"destructive"}
+                  onClick={() => handleDelete(service.id)}
+                  disabled={isDeleting}
+                  className={buttonVariants({ variant: "destructive" })}
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </Button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

@@ -3,7 +3,7 @@ import { NAME_WITH_SPACE_REGEX, PHONE_NUMBER_REGEX } from "@/utils/constant";
 import { z } from "zod";
 import { imageSchema, type ImageResponse } from "./global.schema";
 
-export type Doctor = {
+export type Staff = {
   id: string;
   createdAt: string;
   name: string;
@@ -29,16 +29,16 @@ export type Meta = {
   hasNextPage: boolean;
 };
 
-export type DoctorsResponse = {
-  data: Doctor[];
+export type StaffsResponse = {
+  data: Staff[];
   meta: Meta;
 };
 
-export type TSingleDoctor = Doctor & {
+export type TSingleStaff = Staff & {
   about: string;
 };
 
-export const createDoctorSchema = z.object({
+export const createStaffSchema = z.object({
   name: z
     .string({
       required_error: "Name is required",
@@ -134,11 +134,13 @@ export const createDoctorSchema = z.object({
       { invalid_type_error: "Certifications must be an array of strings" }
     )
     .optional(),
+
+
 });
 
-export type CreateDoctorInput = z.infer<typeof createDoctorSchema>;
+export type CreateStaffInput = z.infer<typeof createStaffSchema>;
 
-export const doctorFormDefaultValues: Partial<CreateDoctorInput> = {
+export const staffFormDefaultValues: Partial<CreateStaffInput> = {
   name: "",
   certifications: [],
   experience: 0,

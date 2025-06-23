@@ -29,49 +29,49 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import {
-  createDoctorSchema,
-  doctorFormDefaultValues,
-  type CreateDoctorInput,
-} from "@/schema/Doctors";
+
 import { ELanguages, ESpecialization, EWeekDays } from "@/types/enums";
 
 import MultiSelect from "./multi-select";
 import { useAppMutation } from "@/utils/react-query";
 import type { ImageResponse } from "@/schema/global.schema";
+import {
+  createStaffSchema,
+  staffFormDefaultValues,
+  type CreateStaffInput,
+} from "@/schema/staffs-schema";
 
-export default function DoctorForm({
+export default function StaffForm({
   defaultValues,
   uploadedImage,
 }: {
-  defaultValues?: CreateDoctorInput;
+  defaultValues?: CreateStaffInput;
   uploadedImage?: ImageResponse | null;
 }) {
   const navigate = useNavigate();
   const params = useParams();
 
-  const form = useForm<CreateDoctorInput>({
-    resolver: zodResolver(createDoctorSchema),
-    defaultValues: defaultValues ?? doctorFormDefaultValues,
+  const form = useForm<CreateStaffInput>({
+    resolver: zodResolver(createStaffSchema),
+    defaultValues: defaultValues ?? staffFormDefaultValues,
   });
 
-  const { mutateAsync: createDoctor, isPending } = useAppMutation({
+  const { mutateAsync: createStaff, isPending } = useAppMutation({
     type: defaultValues ? "patch" : "post",
-    url: defaultValues ? `/doctors/${params.id}` : "/doctors",
-    queryKey: ["doctor", params.id!],
+    url: defaultValues ? `/staffs/${params.id}` : "/staffs",
+    queryKey: ["staff", params.id!],
     form,
   });
 
-  async function onSubmit(data: CreateDoctorInput) {
+  async function onSubmit(data: CreateStaffInput) {
     // Call the mutation with the processed data
-    await createDoctor({ data });
-    navigate("/doctors");
+    await createStaff({ data });
+    navigate("/staffs");
   }
 
   function handleAboutChange(html: string) {
     form.setValue("about", html);
   }
-
   return (
     <div className="">
       <Form {...form}>
@@ -82,9 +82,9 @@ export default function DoctorForm({
           <div className="lg:col-span-1">
             <Card>
               <CardHeader>
-                <CardTitle>Doctor's Photo</CardTitle>
+                <CardTitle>Staff's Photo</CardTitle>
                 <CardDescription>
-                  Upload a professional photo of the doctor
+                  Upload a professional photo of the staff
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -100,7 +100,7 @@ export default function DoctorForm({
               <CardHeader>
                 <CardTitle>Basic Information</CardTitle>
                 <CardDescription>
-                  Enter the doctor's basic details
+                  Enter the staff's basic details
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -213,7 +213,7 @@ export default function DoctorForm({
                         />
                       </FormControl>
                       <FormDescription>
-                        Select the languages the doctor can communicate in
+                        Select the languages the staff can communicate in
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -247,7 +247,7 @@ export default function DoctorForm({
                         />
                       </FormControl>
                       <FormDescription>
-                        Enter certifications or awards received by the doctor
+                        Enter certifications or awards received by the staff
                         separated by commas (optional)
                       </FormDescription>
                       <FormMessage />
@@ -275,10 +275,10 @@ export default function DoctorForm({
                           Email<span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="doctor@hospital.com" {...field} />
+                          <Input placeholder="staff@hospital.com" {...field} />
                         </FormControl>
                         <FormDescription>
-                          Enter active email address of the doctor
+                          Enter active email address of the staff
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -340,7 +340,7 @@ export default function DoctorForm({
                         />
                       </FormControl>
                       <FormDescription>
-                        Specify the days and hours when the doctor is available
+                        Specify the days and hours when the staff is available
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -355,7 +355,7 @@ export default function DoctorForm({
                   Biography<span className="text-red-500">*</span>
                 </CardTitle>
                 <CardDescription>
-                  Write a detailed biography of the doctor
+                  Write a detailed biography of the staff
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -369,15 +369,15 @@ export default function DoctorForm({
                           <TiptapEditor
                             content={field.value}
                             onChange={handleAboutChange}
-                            placeholder="Write the doctor's bio here..."
+                            placeholder="Write the staff's bio here..."
                             className="min-h-[300px]"
                           />
                           {/* <Editor /> */}
                         </FormControl>
                         <FormMessage />
                         <FormDescription>
-                          Your biography is a detailed description of your
-                          doctor with rich text formatting
+                          Your biography is a detailed description of your staff
+                          with rich text formatting
                           <span className="block mt-1 text-right text-xs text-muted-foreground">
                             {field.value?.length || 0}/1000 characters
                           </span>
@@ -391,7 +391,7 @@ export default function DoctorForm({
 
             <div className="flex justify-end gap-4 py-8">
               <Button type="button" variant="outline" asChild>
-                <Link to="/doctors">Cancel</Link>
+                <Link to="/staffs">Cancel</Link>
               </Button>
               <Button type="submit" disabled={isPending}>
                 {isPending ? "Saving..." : "Save Changes"}

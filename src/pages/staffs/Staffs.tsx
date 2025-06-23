@@ -19,99 +19,96 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAppMutation, useAppQuery } from "@/utils/react-query";
-import type { Doctor, DoctorsResponse } from "@/schema/Doctors";
 import SearchInput from "@/components/helpers/search-input";
 import PaginationComponent from "@/components/pagination/pagination";
+import type { Staff, StaffsResponse } from "@/schema/staffs-schema";
 
-export default function DoctorsPage() {
+export default function StaffsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Doctors</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Staffs</h1>
           <p className="text-muted-foreground">
-            Manage specialist doctors information
+            Manage specialist staffs information
           </p>
         </div>
         <Button asChild className="flex items-center gap-1">
-          <Link to="/doctors/new">
+          <Link to="/staffs/new">
             <UserPlus className="h-4 w-4 mr-1" />
-            Add New Doctor
+            Add New Staff
           </Link>
         </Button>
       </div>
       <SearchInput />
-      <DoctorsGrid />
+      <StaffsGrid />
     </div>
   );
 }
 
-function DoctorsGrid() {
+function StaffsGrid() {
   const [searchParam] = useSearchParams();
 
   const {
-    data: doctors,
+    data: staffs,
     isLoading,
     isError,
-  } = useAppQuery<DoctorsResponse>({
-    queryKey: ["doctors", searchParam.toString()],
-    url: `/doctors?${searchParam.toString()}`,
+  } = useAppQuery<StaffsResponse>({
+    queryKey: ["staffs", searchParam.toString()],
+    url: `/staffs?${searchParam.toString()}`,
   });
   if (isLoading) {
     return <div>Loading...</div>;
   }
   if (isError) {
-    <NoDoctors />;
+    <NoStaffs />;
   }
-  if (doctors?.data.length === 0) {
-    return <NoDoctors />;
-    
+  if (staffs?.data.length === 0) {
+    return <NoStaffs />;
   }
 
   return (
     <div className="">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {doctors?.data.map((doctor) => (
+        {staffs?.data.map((staff) => (
           <>
-            <DoctorCard key={doctor.id} doctor={doctor} />
+            <StaffCard key={staff.id} staff={staff} />
           </>
         ))}
       </div>
-      {doctors?.meta && (
+      {staffs?.meta && (
         <div>
-          <PaginationComponent meta={doctors?.meta} />
+          <PaginationComponent meta={staffs?.meta} />
         </div>
       )}
     </div>
   );
 }
 
-function DoctorCard({ doctor }: { doctor: Doctor }) {
-
-  const { mutateAsync: deleteDoctor, isPending: isDeleting,} = useAppMutation({
+function StaffCard({ staff }: { staff: Staff }) {
+  const { mutateAsync: deleteStaff, isPending: isDeleting } = useAppMutation({
     type: "delete",
-    url: `/doctors/${doctor.id}`,
-    queryKey: ["doctors"],
-   
+    url: `/staffs/${staff.id}`,
+    queryKey: ["staffs"],
   });
 
   const handleDeleteConfirm = () => {
-    deleteDoctor({});
+    deleteStaff({});
   };
 
   return (
-    <Card key={doctor.id} className="overflow-hidden group">
+    <Card key={staff.id} className="overflow-hidden group">
       <div className="aspect-square relative">
         <img
-          src={doctor?.profileImage?.url || "https://via.placeholder.com/150"}
-          alt={doctor.name}
+          src={staff?.profileImage?.url || "https://via.placeholder.com/150"}
+          alt={staff.name}
           className="object-cover w-full h-full rounded-2xl transition-transform group-hover:scale-105 duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
           <div className="space-x-2">
             <Button asChild size="sm" variant="outline">
-              <Link to={`/doctors/${doctor.id}`}>
+              <Link to={`/staffs/${staff.id}`}>
                 <Edit className="h-3.5 w-3.5 mr-1" />
                 Edit
               </Link>
@@ -127,7 +124,7 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will permanently delete {doctor.name}'s profile. This
+                    This will permanently delete {staff.name}'s profile. This
                     action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -148,23 +145,23 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
       </div>
       <CardContent className="pt-4">
         <h3 className="font-semibold text-lg truncate capitalize">
-          {doctor.name}
+          {staff.name}
         </h3>
         <div className="flex items-center mt-1 mb-2">
           <Badge variant="outline" className="font-normal p-2 px-3">
-            {doctor.specialization}
+            {staff.specialization}
           </Badge>
         </div>
         <div className="text-sm text-muted-foreground space-y-2">
-          <p>{doctor.certifications}</p>
-          <p>{doctor.experience} years of experience</p>
+          <p>{staff.certifications}</p>
+          <p>{staff.experience} years of experience</p>
         </div>
       </CardContent>
     </Card>
   );
 }
 
-function NoDoctors() {
+function NoStaffs() {
   const [searchParam] = useSearchParams();
   const searchTerm = searchParam.get("search") || "";
 
@@ -176,14 +173,14 @@ function NoDoctors() {
         </div>
         <p className="text-muted-foreground text-center mb-4">
           {searchTerm
-            ? "No doctors match your search criteria"
-            : "You haven't added any doctors yet"}
+            ? "No staffs match your search criteria"
+            : "You haven't added any staffs yet"}
         </p>
         {!searchTerm && (
           <Button asChild>
-            <Link to="/doctors/new">
+            <Link to="/staffs/new">
               <Plus className="h-4 w-4 mr-1" />
-              Add Your First Doctor
+              Add Your First Staff
             </Link>
           </Button>
         )}

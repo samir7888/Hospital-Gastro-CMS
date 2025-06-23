@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
@@ -26,7 +26,6 @@ export const CategorySelect = ({
   const [open, setOpen] = useState(false);
   const form = useFormContext();
 
-
   const {
     data: categories,
     isPending,
@@ -36,8 +35,7 @@ export const CategorySelect = ({
     queryKey: ["blog-categories"],
     url: `/blog-categories`,
   });
-console.log(categories)
- 
+  console.log(categories);
 
   return (
     <FormField
@@ -59,7 +57,6 @@ console.log(categories)
                     aria-expanded={open}
                     className="w-full justify-between"
                   >
-
                     <span className="truncate">
                       {field.value && !isLoading
                         ? categories?.find((cat) => cat.id === field.value)

@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileUpload } from "@/components/file-upload";
-import { TiptapEditor } from "@/components/editor/tiptap-editor";
 import {
   Form,
   FormControl,
@@ -21,18 +20,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { ELanguages, ESpecialization, EWeekDays } from "@/types/enums";
-
-import MultiSelect from "./multi-select";
 import { useAppMutation } from "@/utils/react-query";
 import type { ImageResponse } from "@/schema/global.schema";
 import {
@@ -69,9 +58,6 @@ export default function StaffForm({
     navigate("/staffs");
   }
 
-  function handleAboutChange(html: string) {
-    form.setValue("about", html);
-  }
   return (
     <div className="">
       <Form {...form}>
@@ -115,141 +101,6 @@ export default function StaffForm({
                       <FormControl>
                         <Input placeholder="Dr. John Smith" {...field} />
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="specialization"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Specialty<span className="text-red-500">*</span>
-                        </FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value} // Use value instead of defaultValue
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-full capitalize">
-                              <SelectValue placeholder="Select a specialty" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent className="bg-gray-200 ">
-                            {Object.entries(ESpecialization).map(
-                              ([key, value]) => (
-                                <SelectItem
-                                  value={value}
-                                  key={key}
-                                  className="capitalize"
-                                >
-                                  {value}
-                                </SelectItem>
-                              )
-                            )}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="degree"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Qualifications
-                          <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="MD, PhD" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="experience"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Experience<span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="15 years"
-                          type="number"
-                          {...field}
-                          min={1}
-                          max={50}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="languagesKnown"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>
-                        Languages Known<span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <MultiSelect
-                          name="languagesKnown"
-                          options={Object.entries(ELanguages).map(
-                            ([key, value]) => ({
-                              label: key,
-                              value: value,
-                            })
-                          )}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Select the languages the staff can communicate in
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="certifications"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Certifications</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="e.g. Board Certified, Fellow of XYZ"
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            if (value.trim()) {
-                              field.onChange(
-                                value.split(",").map((cert) => cert.trim())
-                              );
-                            } else {
-                              field.onChange([]);
-                            }
-                          }}
-                          value={
-                            Array.isArray(field.value)
-                              ? field.value.join(", ")
-                              : ""
-                          }
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Enter certifications or awards received by the staff
-                        separated by commas (optional)
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -318,73 +169,6 @@ export default function StaffForm({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="availability"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>
-                        Availability<span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <MultiSelect
-                          name="availability"
-                          options={Object.entries(EWeekDays).map(
-                            ([key, value]) => ({
-                              label: key,
-                              value: value,
-                            })
-                          )}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Specify the days and hours when the staff is available
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>
-                  Biography<span className="text-red-500">*</span>
-                </CardTitle>
-                <CardDescription>
-                  Write a detailed biography of the staff
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="about"
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormControl>
-                          <TiptapEditor
-                            content={field.value}
-                            onChange={handleAboutChange}
-                            placeholder="Write the staff's bio here..."
-                            className="min-h-[300px]"
-                          />
-                          {/* <Editor /> */}
-                        </FormControl>
-                        <FormMessage />
-                        <FormDescription>
-                          Your biography is a detailed description of your staff
-                          with rich text formatting
-                          <span className="block mt-1 text-right text-xs text-muted-foreground">
-                            {field.value?.length || 0}/1000 characters
-                          </span>
-                        </FormDescription>
-                      </FormItem>
-                    );
-                  }}
                 />
               </CardContent>
             </Card>

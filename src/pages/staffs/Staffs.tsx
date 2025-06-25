@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Plus, Edit, Trash2, UserPlus } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 
 import {
   AlertDialog,
@@ -147,15 +146,6 @@ function StaffCard({ staff }: { staff: Staff }) {
         <h3 className="font-semibold text-lg truncate capitalize">
           {staff.name}
         </h3>
-        <div className="flex items-center mt-1 mb-2">
-          <Badge variant="outline" className="font-normal p-2 px-3">
-            {staff.specialization}
-          </Badge>
-        </div>
-        <div className="text-sm text-muted-foreground space-y-2">
-          <p>{staff.certifications}</p>
-          <p>{staff.experience} years of experience</p>
-        </div>
       </CardContent>
     </Card>
   );

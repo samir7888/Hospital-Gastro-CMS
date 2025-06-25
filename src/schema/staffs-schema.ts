@@ -50,31 +50,7 @@ export const createStaffSchema = z.object({
     .min(3, { message: "Name must be between 3 and 50 characters" })
     .max(50, { message: "Name must be between 3 and 50 characters" }),
 
-  specialization: z.nativeEnum(ESpecialization, {
-    required_error: "Specialization is required",
-    invalid_type_error: "Specialization must be one of the allowed values",
-  }),
-
-  experience: z.coerce
-    .number({
-      required_error: "Experience is required",
-      invalid_type_error: "Experience must be a number",
-    })
-    .min(0, { message: "Experience must be at least 0" })
-    .max(100, { message: "Experience must be at most 100" }),
-
-  availability: z
-    .array(
-      z.nativeEnum(EWeekDays, {
-        invalid_type_error: "Each availability entry must be a valid weekday",
-      }),
-      {
-        required_error: "Availability is required",
-        invalid_type_error: "Availability must be an array of weekdays",
-      }
-    )
-    .min(1, { message: "At least one day is required" }),
-
+  
   profileImageId: imageSchema,
 
   email: z
@@ -101,39 +77,7 @@ export const createStaffSchema = z.object({
     .min(3, { message: "Address must be between 3 and 100 characters" })
     .max(100, { message: "Address must be between 3 and 100 characters" }),
 
-  languagesKnown: z
-    .array(
-      z.nativeEnum(ELanguages, {
-        invalid_type_error: "Each language must be one of the allowed values",
-      }),
-      {
-        required_error: "Languages are required",
-        invalid_type_error: "languagesKnown must be an array",
-      }
-    )
-    .min(1, { message: "At least one language is required" }),
-
-  about: z
-    .string({
-      required_error: "About is required",
-      invalid_type_error: "About must be a string",
-    })
-    .min(10, { message: "About must be between 10 and 1000 characters" })
-    .max(1000, { message: "About must be between 10 and 1000 characters" }),
-
-  degree: z
-    .string({
-      required_error: "Degree is required",
-      invalid_type_error: "Degree must be a string",
-    })
-    .min(1, { message: "Degree must not be empty" }),
-
-  certifications: z
-    .array(
-      z.string({ invalid_type_error: "Each certification must be a string" }),
-      { invalid_type_error: "Certifications must be an array of strings" }
-    )
-    .optional(),
+ 
 
 
 });
@@ -142,15 +86,8 @@ export type CreateStaffInput = z.infer<typeof createStaffSchema>;
 
 export const staffFormDefaultValues: Partial<CreateStaffInput> = {
   name: "",
-  certifications: [],
-  experience: 0,
   email: "",
   phone: "",
-  languagesKnown: [],
   address: "",
-  degree: "",
-  availability: [],
   profileImageId: null,
-  about: "",
-  specialization: ESpecialization.Cardiology,
 };

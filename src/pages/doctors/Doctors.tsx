@@ -156,10 +156,12 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
         <h3 className="font-semibold text-lg truncate capitalize">
           {doctor.name}
         </h3>
-        <div className="flex items-center mt-1 mb-2">
-          <Badge variant="outline" className="font-normal p-2 px-3">
-            {doctor.specialization}
-          </Badge>
+        <div className="flex items-center mt-1 mb-2  gap-1 flex-wrap">
+          {doctor.specializations.map((spec) => (
+            <Badge key={spec} variant="outline" className="font-normal capitalize p-2 px-3">
+              {spec}
+            </Badge>
+          ))}
         </div>
         <div className="text-sm text-muted-foreground space-y-2">
           <p>{doctor.certifications}</p>

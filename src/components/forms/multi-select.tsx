@@ -42,7 +42,7 @@ const MultiSelect = ({
   };
 
   const value = form.watch(name);
-
+console.log(value)
   return (
     <Popover>
       <PopoverTrigger className="text-left px-3 py-2 border rounded-md text-sm capitalize">

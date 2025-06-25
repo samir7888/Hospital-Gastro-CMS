@@ -7,7 +7,7 @@ export type Doctor = {
   id: string;
   createdAt: string;
   name: string;
-  specialization: ESpecialization;
+  specializations: ESpecialization[];
   experience: number;
   availability: EWeekDays[];
   email: string;
@@ -50,10 +50,16 @@ export const createDoctorSchema = z.object({
     .min(3, { message: "Name must be between 3 and 50 characters" })
     .max(50, { message: "Name must be between 3 and 50 characters" }),
 
-  specialization: z.nativeEnum(ESpecialization, {
-    required_error: "Specialization is required",
-    invalid_type_error: "Specialization must be one of the allowed values",
-  }),
+  specializations: z
+    .array(
+      z.nativeEnum(ESpecialization, {
+        required_error: "Specialization is required",
+        invalid_type_error: "Specialization must be one of the allowed values",
+      })
+    )
+    .min(1, {
+      message: "At least one specialization is required",
+    }),
 
   experience: z.coerce
     .number({
@@ -150,5 +156,5 @@ export const doctorFormDefaultValues: Partial<CreateDoctorInput> = {
   availability: [],
   profileImageId: null,
   about: "",
-  specialization: ESpecialization.Cardiology,
+  specializations: [],
 };

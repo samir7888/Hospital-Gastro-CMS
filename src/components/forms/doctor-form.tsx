@@ -21,13 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   createDoctorSchema,
@@ -122,35 +116,23 @@ export default function DoctorForm({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="specialization"
-                    render={({ field }) => (
+                    name="specializations"
+                    render={() => (
                       <FormItem>
                         <FormLabel>
                           Specialty<span className="text-red-500">*</span>
                         </FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value} // Use value instead of defaultValue
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-full capitalize">
-                              <SelectValue placeholder="Select a specialty" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent className="bg-gray-200 ">
-                            {Object.entries(ESpecialization).map(
-                              ([key, value]) => (
-                                <SelectItem
-                                  value={value}
-                                  key={key}
-                                  className="capitalize"
-                                >
-                                  {value}
-                                </SelectItem>
-                              )
+                        <FormControl>
+                          <MultiSelect
+                            name="specializations"
+                            options={Object.entries(ESpecialization).map(
+                              ([key, value]) => ({
+                                label: key,
+                                value: value,
+                              })
                             )}
-                          </SelectContent>
-                        </Select>
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

@@ -71,14 +71,16 @@ export default function ServicesPage() {
     
   });
 
-  function onSubmit(data: ServiceSchemaType) {
+   function onSubmit (data: ServiceSchemaType) {
     if (id) {
       // For updates, pass the ID
       saveService({ data, id });
     } else {
       // For creation, just pass the data
-      saveService({ data });
+       saveService({ data });
     }
+
+    navigate("/services");
   }
 
   if (isLoadingService && id) {
